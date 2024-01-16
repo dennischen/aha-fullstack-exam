@@ -1,0 +1,49 @@
+$spacing: 8px;
+$radius: 3px;
+
+.hlayout {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.vlayout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fullwidth {
+    width: 100%;
+}
+
+.flex1 {
+    flex: 1;
+}
+
+.flexgrow1 {
+    flex-grow: 1;
+}
+
+.layout {
+    width: 100%;
+    min-height: 100vh;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flexpadding {
+    flex-grow: 1;
+    min-height: $spacing;
+    min-width: $spacing;
+}

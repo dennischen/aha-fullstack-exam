@@ -1,0 +1,3 @@
+[submodule "nextspace"]
+	path = nextspace
+	url = git@github.com:dennischen/nextspace.git

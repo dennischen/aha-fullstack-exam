@@ -1,0 +1,47 @@
+{
+    "name": "aha-fullstack-exam",
+    "version": "0.1.0",
+    "private": false,
+    "license": "MIT",
+    "scripts": {
+        "dev": "next dev",
+        "lint": "next lint",
+        "test:component:open": "cypress open --component",
+        "test:component": "cypress run --component",
+        "test:e2e:open": "start-server-and-test dev http://localhost:3000 \"cypress open --e2e\"",
+        "test:e2e": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
+        "test": "yarn test:component && yarn test:e2e",
+        "build": "next build",
+        "start": "next start",
+        "build-start": "next build & next start"
+    },
+    "dependencies": {
+        "next": "13.5.6"
+    },
+    "devDependencies": {
+        "@types/accept-language-parser": "^1.5.6",
+        "@types/node": "^20",
+        "@types/nprogress": "^0.2.2",
+        "@types/prismjs": "^1.26.3",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "accept-language-parser": "^1.5.0",
+        "clsx": "^2.0.0",
+        "cypress": "^13.4.0",
+        "encoding": "^0.1.13",
+        "eslint": "^8",
+        "eslint-config-next": "13.5.6",
+        "i18next": "^23.6.0",
+        "marked": "^11.0.0",
+        "moment": "^2.29.4",
+        "nprogress": "^0.2.0",
+        "openai": "^4.20.1",
+        "prismjs": "^1.29.0",
+        "react": "^18",
+        "react-dom": "^18",
+        "sass": "^1.69.4",
+        "start-server-and-test": "^2.0.1",
+        "typescript": "^5",
+        "universal-cookie": "^6.1.1"
+    }
+}

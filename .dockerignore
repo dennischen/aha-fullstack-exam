@@ -1,0 +1,9 @@
+
+# git
+.git
+
+# node
+node_modules
+
+# submodules
+nextspace
