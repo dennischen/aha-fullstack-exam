@@ -22,13 +22,12 @@ export type UserCreate = {
 }
 
 export type UserUpdate = {
-    emailVerified?: boolean
-    displayName?: string
-    hashedPassword: string
-    createdDatetime: number
-    loginCount: number
-    lastAccessDatetime: number
-    disabled: boolean
+    emailVerified?: boolean | null
+    displayName?: string | null
+    hashedPassword?: string | null
+    loginCount?: number | null
+    lastAccessDatetime?: number | null
+    disabled?: boolean | null
 }
 
 export type AuthSession = {
@@ -46,8 +45,8 @@ export type AuthSessionCreate = {
 }
 
 export type AuthSessionUpdate = {
-    lastAccessDatetime: number
-    invalidate: boolean
+    lastAccessDatetime: number | null
+    invalidate: boolean | null
 }
 
 export type EmailVerification = {
@@ -64,6 +63,6 @@ export type EmailVerificationCreate = {
 }
 
 export type EmailVerificationUpdate = {
-    verifiedDatetime?: number
+    verifiedDatetime?: number | null
 }
 

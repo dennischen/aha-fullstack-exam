@@ -1,5 +1,5 @@
-import { OrderBy, UserDao, UserOrderBy, UserPagable, UserPage } from "./dao"
-import { UserCreate, User, UserUpdate } from "./model"
+import { OrderBy, UserDao, UserOrderBy, UserPagable, UserPage } from "../dao"
+import { UserCreate, User, UserUpdate } from "../model"
 
 import type { Connection, OkPacket } from 'mysql'
 import { query, toOrderByExpression } from "./mysql-utils"
@@ -17,7 +17,8 @@ function wrapUserFromRowDataPacket(user: User /*RowDataPacket*/) {
         disabled: !!user.disabled,//bit -> boolean
         emailVerified: !!user.emailVerified,//bit -> boolean
         displayName: user.displayName,
-        hashedPassword: user.hashedPassword
+        hashedPassword: user.hashedPassword,
+        lastAccessDatetime: user.lastAccessDatetime ?? undefined
     } as User
 }
 
@@ -31,21 +32,22 @@ export class MysqlUserDao implements UserDao {
 
     async create(userCreate: UserCreate): Promise<User> {
 
-        const uuid = uuidv4()
+        const uid = uuidv4()
 
         const user: User = {
-            uid: uuid,
+            uid: uid,
             email: userCreate.email,
             createdDatetime: new Date().getTime(),
             loginCount: 0,
             disabled: userCreate.disabled ?? false,
             emailVerified: userCreate.emailVerified ?? false,
             displayName: userCreate.displayName,
-            hashedPassword: userCreate.hashedPassword
+            hashedPassword: userCreate.hashedPassword,
+            lastAccessDatetime: undefined
         }
 
         await query(this.connection, `INSERT INTO ${TABLE} SET ?`, user)
-        return user
+        return this.get(uid)
     }
 
     async get(uid: string): Promise<User> {
@@ -87,7 +89,7 @@ export class MysqlUserDao implements UserDao {
 
     async list(orderBy?: UserOrderBy | UserOrderBy[]): Promise<User[]> {
         const orderByExpr = toOrderByExpression(orderBy)
-        const { results } = await query<User[]>(this.connection, `SELECT * FROM ${TABLE}${orderByExpr ? ` ${orderByExpr}` : ''}`)
+        const { results } = await query<User[]>(this.connection, `SELECT * FROM ${TABLE}${orderByExpr ? ` ORDER BY ${orderByExpr}` : ''}`)
         const users: User[] = []
         for (const user of results) {
             users.push(wrapUserFromRowDataPacket(user))
@@ -95,13 +97,52 @@ export class MysqlUserDao implements UserDao {
         return users
     }
 
+    async update(uid: string, userUpdate: UserUpdate): Promise<User> {
+        // const oldUser = this.get(uid)
+
+        const { disabled, displayName, emailVerified, hashedPassword, lastAccessDatetime, loginCount } = userUpdate
+        const columns: string[] = []
+        const values: any[] = []
+
+        if (disabled !== undefined) {
+            columns.push('disabled')
+            values.push(disabled)
+        }
+        if (displayName !== undefined) {
+            columns.push('displayName')
+            values.push(displayName)
+        }
+        if (emailVerified !== undefined) {
+            columns.push('emailVerified')
+            values.push(emailVerified)
+        }
+        if (hashedPassword !== undefined) {
+            columns.push('hashedPassword')
+            values.push(hashedPassword)
+        }
+        if (lastAccessDatetime !== undefined) {
+            columns.push('lastAccessDatetime')
+            values.push(lastAccessDatetime)
+        }
+        if (loginCount !== undefined) {
+            columns.push('loginCount')
+            values.push(loginCount)
+        }
+        if (columns.length !== 0) {
+            const { results } = await query<OkPacket>(this.connection, `UPDATE ${TABLE} SET ${columns.map((column)=>`${column}=?`).join(",")} WHERE uid = ?`, [...values, uid],)
+            // results.changedRows===1
+        }
+
+        return this.get(uid)
+
+
+
+    }
 
     page(pageable?: UserPagable): Promise<UserPage> {
         throw new Error("Method not implemented.")
     }
 
-    async update(uid: string, userUpdate: UserUpdate): Promise<User> {
-        throw new Error("Method not implemented.")
-    }
+
 
 }
