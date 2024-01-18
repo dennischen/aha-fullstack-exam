@@ -18,9 +18,7 @@
     "build-start": "next build & next start"
   },
   "dependencies": {
-    "mysql": "^2.18.1",
-    "next": "13.5.6",
-    "uuid": "^9.0.1"
+    "next": "13.5.6"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.2.0",
@@ -33,6 +31,7 @@
     "@types/prismjs": "^1.26.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/swagger-ui-react": "^4.18.3",
     "@types/uuid": "^9.0.7",
     "accept-language-parser": "^1.5.0",
     "clsx": "^2.0.0",
@@ -45,6 +44,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "marked": "^11.0.0",
     "moment": "^2.29.4",
+    "mysql": "^2.18.1",
+    "next-swagger-doc": "^0.4.0",
     "nprogress": "^0.2.0",
     "openai": "^4.20.1",
     "prismjs": "^1.29.0",
@@ -52,7 +53,9 @@
     "react-dom": "^18",
     "sass": "^1.69.4",
     "start-server-and-test": "^2.0.1",
+    "swagger-ui-react": "^5.11.0",
     "typescript": "^5",
-    "universal-cookie": "^6.1.1"
+    "universal-cookie": "^6.1.1",
+    "uuid": "^9.0.1"
   }
 }
