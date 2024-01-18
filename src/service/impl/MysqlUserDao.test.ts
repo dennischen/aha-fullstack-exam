@@ -71,7 +71,7 @@ if (!host || !user || !password || !database) {
 
             let { results: result1 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_USER')
             let { results: result2 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_AUTH_SESSION')
-            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_EMAIL_VERIFICATION')
+            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_EMAIL_ACTIVATION')
 
             expect(result1.length).toBe(0)
             expect(result2.length).toBe(0)
@@ -100,7 +100,7 @@ if (!host || !user || !password || !database) {
                 uid,
                 displayName,
                 email,
-                emailVerified,
+                emailActivated,
                 hashedPassword,
                 loginCount,
                 lastAccessDatetime,
@@ -113,7 +113,7 @@ if (!host || !user || !password || !database) {
             expect(displayName).toEqual('Dennis Chen')
             expect(hashedPassword).toEqual('12345678')
             expect(createdDatetime).toBeTruthy()
-            expect(emailVerified).toEqual(false)
+            expect(emailActivated).toEqual(false)
             expect(loginCount).toEqual(0)
             expect(lastAccessDatetime).not.toBeTruthy()
             expect(disabled).toEqual(false)
@@ -129,7 +129,7 @@ if (!host || !user || !password || !database) {
             expect(user1.displayName).toEqual(displayName)
             expect(user1.hashedPassword).toEqual(hashedPassword)
             expect(user1.createdDatetime).toEqual(createdDatetime)
-            expect(user1.emailVerified).toEqual(emailVerified)
+            expect(user1.emailActivated).toEqual(emailActivated)
             expect(user1.loginCount).toEqual(loginCount)
             expect(user1.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user1.disabled).toEqual(disabled)
@@ -152,7 +152,7 @@ if (!host || !user || !password || !database) {
             expect(user2!.displayName).toEqual(displayName)
             expect(user2!.hashedPassword).toEqual(hashedPassword)
             expect(user2!.createdDatetime).toEqual(createdDatetime)
-            expect(user2!.emailVerified).toEqual(emailVerified)
+            expect(user2!.emailActivated).toEqual(emailActivated)
             expect(user2!.loginCount).toEqual(loginCount)
             expect(user2!.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user2!.disabled).toEqual(disabled)
@@ -169,7 +169,7 @@ if (!host || !user || !password || !database) {
             expect(user3!.displayName).toEqual(displayName)
             expect(user3!.hashedPassword).toEqual(hashedPassword)
             expect(user3!.createdDatetime).toEqual(createdDatetime)
-            expect(user3!.emailVerified).toEqual(emailVerified)
+            expect(user3!.emailActivated).toEqual(emailActivated)
             expect(user3!.loginCount).toEqual(loginCount)
             expect(user3!.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user3!.disabled).toEqual(disabled)
@@ -315,7 +315,7 @@ if (!host || !user || !password || !database) {
             expect(user.displayName).toEqual('Mr. D')
             expect(user.hashedPassword).toEqual(user1.hashedPassword)
             expect(user.createdDatetime).toEqual(user1.createdDatetime)
-            expect(user.emailVerified).toEqual(user1.emailVerified)
+            expect(user.emailActivated).toEqual(user1.emailActivated)
             expect(user.loginCount).toEqual(user1.loginCount)
             expect(user.lastAccessDatetime).toEqual(user1.lastAccessDatetime)
             expect(user.disabled).toEqual(user1.disabled)
@@ -324,7 +324,7 @@ if (!host || !user || !password || !database) {
             user = await userDao.update(user1.uid, {
                 loginCount: 20,
                 disabled: true,
-                emailVerified: true,
+                emailActivated: true,
                 displayName: 'Dr. D',
                 hashedPassword: '5678',
                 lastAccessDatetime: 7788
@@ -334,7 +334,7 @@ if (!host || !user || !password || !database) {
             expect(user.displayName).toEqual('Dr. D')
             expect(user.hashedPassword).toEqual('5678')
             expect(user.createdDatetime).toEqual(user1.createdDatetime)
-            expect(user.emailVerified).toEqual(true)
+            expect(user.emailActivated).toEqual(true)
             expect(user.loginCount).toEqual(20)
             expect(user.lastAccessDatetime).toEqual(7788)
             expect(user.disabled).toEqual(true)
@@ -381,177 +381,177 @@ if (!host || !user || !password || !database) {
 
             let pageAll = await userDao.page()
             expect(pageAll.index).toEqual(0)
-            expect(pageAll.total).toEqual(1)
-            expect(pageAll.totalItem).toEqual(200)
-            expect(pageAll.size).toEqual(200)
-            expect(pageAll.items.length).toEqual(200)
+            expect(pageAll.totalPages).toEqual(1)
+            expect(pageAll.totalItems).toEqual(200)
+            expect(pageAll.pageSize).toEqual(200)
+            expect(pageAll.content.length).toEqual(200)
 
-            let user = pageAll.items[0]
+            let user = pageAll.content[0]
             expect(user.displayName).toEqual('Dennis Chen0')
-            user = pageAll.items[1]
+            user = pageAll.content[1]
             expect(user.displayName).toEqual('ColaOrange1')
-            user = pageAll.items[198]
+            user = pageAll.content[198]
             expect(user.displayName).toEqual('Dennis Chen198')
-            user = pageAll.items[199]
+            user = pageAll.content[199]
             expect(user.displayName).toEqual('ColaOrange199')
 
 
             pageAll = await userDao.page({ orderBy: { field: 'createdDatetime', desc: true } })
             expect(pageAll.index).toEqual(0)
-            expect(pageAll.total).toEqual(1)
-            expect(pageAll.totalItem).toEqual(200)
-            expect(pageAll.size).toEqual(200)
-            expect(pageAll.items.length).toEqual(200)
+            expect(pageAll.totalPages).toEqual(1)
+            expect(pageAll.totalItems).toEqual(200)
+            expect(pageAll.pageSize).toEqual(200)
+            expect(pageAll.content.length).toEqual(200)
 
 
-            user = pageAll.items[0]
+            user = pageAll.content[0]
             expect(user.displayName).toEqual('ColaOrange199')
-            user = pageAll.items[1]
+            user = pageAll.content[1]
             expect(user.displayName).toEqual('Dennis Chen198')
-            user = pageAll.items[198]
+            user = pageAll.content[198]
             expect(user.displayName).toEqual('ColaOrange1')
-            user = pageAll.items[199]
+            user = pageAll.content[199]
             expect(user.displayName).toEqual('Dennis Chen0')
 
 
             //page 0, size 10, 0-9
-            let page = await userDao.page({ size: 10 })
+            let page = await userDao.page({ pageSize: 10 })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            user = page.content[0]
             expect(user.displayName).toEqual('Dennis Chen0')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('ColaOrange1')
-            user = page.items[8]
+            user = page.content[8]
             expect(user.displayName).toEqual('Dennis Chen8')
-            user = page.items[9]
+            user = page.content[9]
             expect(user.displayName).toEqual('ColaOrange9')
 
-            page = await userDao.page({ index: 0, size: 10 })
+            page = await userDao.page({ index: 0, pageSize: 10 })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            user = page.content[0]
             expect(user.displayName).toEqual('Dennis Chen0')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('ColaOrange1')
-            user = page.items[8]
+            user = page.content[8]
             expect(user.displayName).toEqual('Dennis Chen8')
-            user = page.items[9]
+            user = page.content[9]
             expect(user.displayName).toEqual('ColaOrange9')
 
             //page 3, size 10, 30-39
-            page = await userDao.page({ index: 3, size: 10 })
+            page = await userDao.page({ index: 3, pageSize: 10 })
             expect(page.index).toEqual(3)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            user = page.content[0]
             expect(user.displayName).toEqual('Dennis Chen30')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('ColaOrange31')
-            user = page.items[8]
+            user = page.content[8]
             expect(user.displayName).toEqual('Dennis Chen38')
-            user = page.items[9]
+            user = page.content[9]
             expect(user.displayName).toEqual('ColaOrange39')
 
 
             //page 19, size 10, 190-199
-            page = await userDao.page({ index: 19, size: 10 })
+            page = await userDao.page({ index: 19, pageSize: 10 })
             expect(page.index).toEqual(19)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            user = page.content[0]
             expect(user.displayName).toEqual('Dennis Chen190')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('ColaOrange191')
-            user = page.items[8]
+            user = page.content[8]
             expect(user.displayName).toEqual('Dennis Chen198')
-            user = page.items[9]
+            user = page.content[9]
             expect(user.displayName).toEqual('ColaOrange199')
 
 
             //page 20, size 10, 190-199
-            page = await userDao.page({ index: 20, size: 10 })
+            page = await userDao.page({ index: 20, pageSize: 10 })
             expect(page.index).toEqual(20)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(0)
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(0)
 
 
             //page 0, size 15, 0 - 14
-            page = await userDao.page({ index: 0, size: 15 })
+            page = await userDao.page({ index: 0, pageSize: 15 })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(15)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(15)
+            user = page.content[0]
             expect(user.displayName).toEqual('Dennis Chen0')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('ColaOrange1')
-            user = page.items[13]
+            user = page.content[13]
             expect(user.displayName).toEqual('ColaOrange13')
-            user = page.items[14]
+            user = page.content[14]
             expect(user.displayName).toEqual('Dennis Chen14')
 
             //page 13, size 15, 195-199
-            page = await userDao.page({ index: 13, size: 15 })
+            page = await userDao.page({ index: 13, pageSize: 15 })
             expect(page.index).toEqual(13)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(5)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(5)
+            user = page.content[0]
             expect(user.displayName).toEqual('ColaOrange195')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('Dennis Chen196')
-            user = page.items[3]
+            user = page.content[3]
             expect(user.displayName).toEqual('Dennis Chen198')
-            user = page.items[4]
+            user = page.content[4]
             expect(user.displayName).toEqual('ColaOrange199')
 
 
 
             //page 0, size 15, desc. 199 - 185
-            page = await userDao.page({ index: 0, size: 15, orderBy: { field: 'createdDatetime', desc : true} })
+            page = await userDao.page({ index: 0, pageSize: 15, orderBy: { field: 'createdDatetime', desc : true} })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(15)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(15)
+            user = page.content[0]
             expect(user.displayName).toEqual('ColaOrange199')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('Dennis Chen198')
-            user = page.items[13]
+            user = page.content[13]
             expect(user.displayName).toEqual('Dennis Chen186')
-            user = page.items[14]
+            user = page.content[14]
             expect(user.displayName).toEqual('ColaOrange185')
 
             //page 13, size 15, desc. 4 - 0
-            page = await userDao.page({ index: 13, size: 15 , orderBy: { field: 'createdDatetime', desc : true} })
+            page = await userDao.page({ index: 13, pageSize: 15 , orderBy: { field: 'createdDatetime', desc : true} })
             expect(page.index).toEqual(13)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(5)
-            user = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(5)
+            user = page.content[0]
             expect(user.displayName).toEqual('Dennis Chen4')
-            user = page.items[1]
+            user = page.content[1]
             expect(user.displayName).toEqual('ColaOrange3')
-            user = page.items[3]
+            user = page.content[3]
             expect(user.displayName).toEqual('ColaOrange1')
-            user = page.items[4]
+            user = page.content[4]
             expect(user.displayName).toEqual('Dennis Chen0')
 
             //clean up

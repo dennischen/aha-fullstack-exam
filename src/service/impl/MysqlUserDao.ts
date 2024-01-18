@@ -15,7 +15,7 @@ function wrapUserFromRowDataPacket(user: User /*RowDataPacket*/) {
         createdDatetime: user.createdDatetime,
         loginCount: user.loginCount,
         disabled: !!user.disabled,//bit -> boolean
-        emailVerified: !!user.emailVerified,//bit -> boolean
+        emailActivated: !!user.emailActivated,//bit -> boolean
         displayName: user.displayName,
         hashedPassword: user.hashedPassword,
         lastAccessDatetime: user.lastAccessDatetime ?? undefined
@@ -40,7 +40,7 @@ export class MysqlUserDao implements UserDao {
             createdDatetime: new Date().getTime(),
             loginCount: 0,
             disabled: userCreate.disabled ?? false,
-            emailVerified: userCreate.emailVerified ?? false,
+            emailActivated: userCreate.emailAcativated ?? false,
             displayName: userCreate.displayName,
             hashedPassword: userCreate.hashedPassword,
             lastAccessDatetime: undefined
@@ -100,7 +100,7 @@ export class MysqlUserDao implements UserDao {
     async update(uid: string, userUpdate: UserUpdate): Promise<User> {
         // const oldUser = this.get(uid)
 
-        const { disabled, displayName, emailVerified, hashedPassword, lastAccessDatetime, loginCount } = userUpdate
+        const { disabled, displayName, emailActivated, hashedPassword, lastAccessDatetime, loginCount } = userUpdate
         const columns: string[] = []
         const values: any[] = []
 
@@ -112,9 +112,9 @@ export class MysqlUserDao implements UserDao {
             columns.push('displayName')
             values.push(displayName)
         }
-        if (emailVerified !== undefined) {
-            columns.push('emailVerified')
-            values.push(emailVerified)
+        if (emailActivated !== undefined) {
+            columns.push('emailActivated')
+            values.push(emailActivated)
         }
         if (hashedPassword !== undefined) {
             columns.push('hashedPassword')
@@ -140,7 +140,7 @@ export class MysqlUserDao implements UserDao {
     async page(pageable: UserPagable = {}): Promise<UserPage> {
 
         const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
-        const size = pageable.size && pageable.size > 0 ? pageable.size : NaN
+        const size = pageable.pageSize && pageable.pageSize > 0 ? pageable.pageSize : NaN
         const orderBy = pageable.orderBy ?? { field: 'createdDatetime' }
 
         if (isNaN(size)) {
@@ -149,19 +149,21 @@ export class MysqlUserDao implements UserDao {
                 const users = await this.list(orderBy)
                 return {
                     index,
-                    size: users.length,
-                    totalItem: users.length,
-                    total: 1,
-                    items: users
+                    pageSize: users.length,
+                    totalItems: users.length,
+                    totalPages: 1,
+                    numItems: users.length,
+                    content: users
                 }
             } else {
                 const count = await this.count()
                 return {
                     index,
-                    size: count,
-                    totalItem: count,
-                    total: 1,
-                    items: []
+                    pageSize: count,
+                    totalItems: count,
+                    totalPages: 1,
+                    numItems: 0,
+                    content: []
                 }
             }
         } else {
@@ -171,15 +173,16 @@ export class MysqlUserDao implements UserDao {
             for (const user of results) {
                 users.push(wrapUserFromRowDataPacket(user))
             }
-            const totalItem = await this.count()
-            const totalPage = (Math.floor(totalItem / size)) + (totalItem % size == 0 ? 0 : 1)
+            const totalItems = await this.count()
+            const totalPages = (Math.floor(totalItems / size)) + (totalItems % size == 0 ? 0 : 1)
 
             return {
                 index,
-                size,
-                totalItem,
-                total: totalPage,
-                items: users
+                pageSize: size,
+                totalItems: totalItems,
+                totalPages: totalPages,
+                numItems: users.length,
+                content: users
             }
         }
 

@@ -1,4 +1,4 @@
-import { AuthSession, AuthSessionCreate, AuthSessionUpdate, EmailVerification, EmailVerificationCreate, EmailVerificationUpdate, User, UserCreate, UserUpdate } from "./entity"
+import { AuthSession, AuthSessionCreate, AuthSessionUpdate, EmailActivation, EmailActivationCreate, EmailActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
 
 export type Entity = Record<string, any>
 
@@ -10,7 +10,7 @@ export type Pageable<T extends Entity> = {
     /**
      * size of the page, e.g. 20, 50, 100
      */
-    size?: number
+    pageSize?: number
 
     /**
      * orderby for the query
@@ -27,23 +27,28 @@ export type Page<T> = {
     /**
      * total number of the page from query, e.g. 10, 20
      */
-    total: number
+    totalPages: number
 
     /**
      * size of the page from query, the size may large than items.length if it reach to last page
      */
-    size: number
+    pageSize: number
 
 
     /**
      * total number of the items
      */
-    totalItem: number
+    totalItems: number
+
+    /**
+     * number of the items in this page
+     */
+    numItems: number
 
     /**
      * item instance in this page
      */
-    items: T[]
+    content: T[]
 }
 
 export type OrderBy<T extends Entity, F = keyof T> = {
@@ -101,24 +106,24 @@ export interface AuthSessionDao {
 
 }
 
-export type EmailVerificationOrderBy = OrderBy<EmailVerification>
-export type EmailVerificationPagable = Pageable<EmailVerification>
-export type EmailVerificationPage = Page<EmailVerification>
-export interface EmailVerificationDao {
+export type EmailActivationOrderBy = OrderBy<EmailActivation>
+export type EmailActivationPagable = Pageable<EmailActivation>
+export type EmailActivationPage = Page<EmailActivation>
+export interface EmailActivationDao {
 
-    create(verificationCreate: EmailVerificationCreate): Promise<EmailVerification>
+    create(activationCreate: EmailActivationCreate): Promise<EmailActivation>
 
-    update(uid: string, verificationUpdate: EmailVerificationUpdate): Promise<EmailVerification>
+    update(uid: string, activationUpdate: EmailActivationUpdate): Promise<EmailActivation>
 
-    get(uid: string): Promise<EmailVerification>
+    get(uid: string): Promise<EmailActivation>
 
-    findByToken(token: string): Promise<EmailVerification | undefined>
+    findByToken(token: string): Promise<EmailActivation | undefined>
 
     delete(uid: string): Promise<boolean>
 
-    list(orderBy?: EmailVerificationOrderBy | EmailVerificationOrderBy[]): Promise<EmailVerification[]>
+    list(orderBy?: EmailActivationOrderBy | EmailActivationOrderBy[]): Promise<EmailActivation[]>
 
-    page(pageable?: EmailVerificationPagable): Promise<EmailVerificationPage>    
+    page(pageable?: EmailActivationPagable): Promise<EmailActivationPage>    
 
     deleteAll(): Promise<void>
 

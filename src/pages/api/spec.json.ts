@@ -18,44 +18,30 @@ export const swaggerOptions: SwaggerOptions = {
             description: 'The OpenAPI document and test site for Aha Fullstack Exam'
         },
         tags: [{
-            name: 'auth',
-            description: 'authenitcation related api'
+            name: 'pub',
+            description: 'public api for unathenticated user'
         }, {
-            name: 'signin',
-            description: 'signin related api'
+            name: 'pri',
+            description: 'api for athenticated user'
         }, {
-            name: 'signup',
-            description: 'signup related api'
+            name: 'adm',
+            description: 'adm api for athenticated administrator'
         }, {
-            name: 'user',
-            description: 'user related api'
-        }, {
-            name: 'statastics',
-            description: 'statastics related api'
+            name: 'test',
+            description: 'api for test'
         }],
         components: {
             securitySchemes: {
-                "authToken": {
+                authToken: {
                     in: 'header',
                     name: 'authToken',
                     type: 'apiKey'
-                }
-            },
-            schemas: {
-                IdObject: {
-                    type: 'object',
-                    properties: {
-                        id: {
-                            type: 'string',
-                            example: 'abcdefg'
-                        }
-                    },
-                    required: ['id']
                 }
             }
         }
     },
     apiFolder: 'src/app/api',
+    schemaFolders: ['src/app/api']
 }
 
 const swaggerHandler = withSwagger(swaggerOptions)

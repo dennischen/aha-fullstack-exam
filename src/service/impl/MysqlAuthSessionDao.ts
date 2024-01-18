@@ -119,7 +119,7 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
     async page(pageable: AuthSessionPagable = {}): Promise<AuthSessionPage> {
 
         const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
-        const size = pageable.size && pageable.size > 0 ? pageable.size : NaN
+        const size = pageable.pageSize && pageable.pageSize > 0 ? pageable.pageSize : NaN
         const orderBy = pageable.orderBy ?? { field: 'createdDatetime' }
 
         if (isNaN(size)) {
@@ -128,19 +128,21 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
                 const authSessions = await this.list(orderBy)
                 return {
                     index,
-                    size: authSessions.length,
-                    totalItem: authSessions.length,
-                    total: 1,
-                    items: authSessions
+                    pageSize: authSessions.length,
+                    totalItems: authSessions.length,
+                    totalPages: 1,
+                    numItems: authSessions.length,
+                    content: authSessions
                 }
             } else {
                 const count = await this.count()
                 return {
                     index,
-                    size: count,
-                    totalItem: count,
-                    total: 1,
-                    items: []
+                    pageSize: count,
+                    totalItems: count,
+                    totalPages: 1,
+                    numItems: 0,
+                    content: []
                 }
             }
         } else {
@@ -155,10 +157,11 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
 
             return {
                 index,
-                size,
-                totalItem,
-                total: totalPage,
-                items: authSessions
+                pageSize: size,
+                totalItems: totalItem,
+                totalPages: totalPage,
+                numItems: authSessions.length, 
+                content: authSessions
             }
         }
     }

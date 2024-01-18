@@ -6,7 +6,7 @@ export type User = {
     displayName: string
     hashedPassword: string
     createdDatetime: number
-    emailVerified: boolean
+    emailActivated: boolean
     loginCount: number
     disabled: boolean
 
@@ -17,12 +17,12 @@ export type UserCreate = {
     email: string
     displayName: string
     hashedPassword: string,
-    emailVerified?: boolean
+    emailAcativated?: boolean
     disabled?: boolean
 }
 
 export type UserUpdate = {
-    emailVerified?: boolean
+    emailActivated?: boolean
     displayName?: string
     hashedPassword?: string
     loginCount?: number
@@ -53,24 +53,24 @@ export type AuthSessionUpdate = {
     invalid?: boolean
 }
 
-export type EmailVerification = {
+export type EmailActivation = {
     uid: string
     userUid: string
     token: string
     createdDatetime: number
 
-    verifiedDatetime?: number
+    activatedDatetime?: number
 }
 
-export type EmailVerificationCreate = {
+export type EmailActivationCreate = {
     userUid: string
     token: string
 }
 
-export type EmailVerificationUpdate = {
+export type EmailActivationUpdate = {
     /**
      * nullable field
      */
-    verifiedDatetime?: number | null
+    activatedDatetime?: number | null
 }
 

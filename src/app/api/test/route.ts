@@ -36,7 +36,8 @@ import { NextRequest, NextResponse } from "next/server"
  *                 - id
  *       400:
  *         description: invalidate argument supplied
- * 
+ *     tags:
+ *       - test
  */
 export async function GET(req: NextRequest, res: NextResponse) {
     const { searchParams } = new URL(req.url)
@@ -73,6 +74,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
  *         description: user is not authenticated
  *     security:
  *       - authToken: [] 
+ *     tags:
+ *       - test
  */
 export async function POST(req: NextRequest, res: NextResponse) { 
     const contentType = req.headers.get('Content-Type')

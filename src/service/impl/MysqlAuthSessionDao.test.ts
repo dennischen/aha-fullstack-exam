@@ -72,7 +72,7 @@ if (!host || !user || !password || !database) {
 
             let { results: result1 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_USER')
             let { results: result2 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_AUTH_SESSION')
-            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_EMAIL_VERIFICATION')
+            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_EMAIL_ACTIVATION')
 
             expect(result1.length).toBe(0)
             expect(result2.length).toBe(0)
@@ -379,177 +379,177 @@ if (!host || !user || !password || !database) {
 
             let pageAll = await authSessionDao.page()
             expect(pageAll.index).toEqual(0)
-            expect(pageAll.total).toEqual(1)
-            expect(pageAll.totalItem).toEqual(200)
-            expect(pageAll.size).toEqual(200)
-            expect(pageAll.items.length).toEqual(200)
+            expect(pageAll.totalPages).toEqual(1)
+            expect(pageAll.totalItems).toEqual(200)
+            expect(pageAll.pageSize).toEqual(200)
+            expect(pageAll.content.length).toEqual(200)
 
-            let authSession = pageAll.items[0]
+            let authSession = pageAll.content[0]
             expect(authSession.token).toEqual('abc0')
-            authSession = pageAll.items[1]
+            authSession = pageAll.content[1]
             expect(authSession.token).toEqual('xyz1')
-            authSession = pageAll.items[198]
+            authSession = pageAll.content[198]
             expect(authSession.token).toEqual('abc198')
-            authSession = pageAll.items[199]
+            authSession = pageAll.content[199]
             expect(authSession.token).toEqual('xyz199')
 
 
             pageAll = await authSessionDao.page({ orderBy: { field: 'createdDatetime', desc: true } })
             expect(pageAll.index).toEqual(0)
-            expect(pageAll.total).toEqual(1)
-            expect(pageAll.totalItem).toEqual(200)
-            expect(pageAll.size).toEqual(200)
-            expect(pageAll.items.length).toEqual(200)
+            expect(pageAll.totalPages).toEqual(1)
+            expect(pageAll.totalItems).toEqual(200)
+            expect(pageAll.pageSize).toEqual(200)
+            expect(pageAll.content.length).toEqual(200)
 
 
-            authSession = pageAll.items[0]
+            authSession = pageAll.content[0]
             expect(authSession.token).toEqual('xyz199')
-            authSession = pageAll.items[1]
+            authSession = pageAll.content[1]
             expect(authSession.token).toEqual('abc198')
-            authSession = pageAll.items[198]
+            authSession = pageAll.content[198]
             expect(authSession.token).toEqual('xyz1')
-            authSession = pageAll.items[199]
+            authSession = pageAll.content[199]
             expect(authSession.token).toEqual('abc0')
 
 
             //page 0, size 10, 0-9
-            let page = await authSessionDao.page({ size: 10 })
+            let page = await authSessionDao.page({ pageSize: 10 })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('abc0')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('xyz1')
-            authSession = page.items[8]
+            authSession = page.content[8]
             expect(authSession.token).toEqual('abc8')
-            authSession = page.items[9]
+            authSession = page.content[9]
             expect(authSession.token).toEqual('xyz9')
 
-            page = await authSessionDao.page({ index: 0, size: 10 })
+            page = await authSessionDao.page({ index: 0, pageSize: 10 })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('abc0')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('xyz1')
-            authSession = page.items[8]
+            authSession = page.content[8]
             expect(authSession.token).toEqual('abc8')
-            authSession = page.items[9]
+            authSession = page.content[9]
             expect(authSession.token).toEqual('xyz9')
 
             //page 3, size 10, 30-39
-            page = await authSessionDao.page({ index: 3, size: 10 })
+            page = await authSessionDao.page({ index: 3, pageSize: 10 })
             expect(page.index).toEqual(3)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('abc30')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('xyz31')
-            authSession = page.items[8]
+            authSession = page.content[8]
             expect(authSession.token).toEqual('abc38')
-            authSession = page.items[9]
+            authSession = page.content[9]
             expect(authSession.token).toEqual('xyz39')
 
 
             //page 19, size 10, 190-199
-            page = await authSessionDao.page({ index: 19, size: 10 })
+            page = await authSessionDao.page({ index: 19, pageSize: 10 })
             expect(page.index).toEqual(19)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(10)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(10)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('abc190')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('xyz191')
-            authSession = page.items[8]
+            authSession = page.content[8]
             expect(authSession.token).toEqual('abc198')
-            authSession = page.items[9]
+            authSession = page.content[9]
             expect(authSession.token).toEqual('xyz199')
 
 
             //page 20, size 10, 190-199
-            page = await authSessionDao.page({ index: 20, size: 10 })
+            page = await authSessionDao.page({ index: 20, pageSize: 10 })
             expect(page.index).toEqual(20)
-            expect(page.total).toEqual(20)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(10)
-            expect(page.items.length).toEqual(0)
+            expect(page.totalPages).toEqual(20)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(10)
+            expect(page.content.length).toEqual(0)
 
 
             //page 0, size 15, 0 - 14
-            page = await authSessionDao.page({ index: 0, size: 15 })
+            page = await authSessionDao.page({ index: 0, pageSize: 15 })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(15)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(15)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('abc0')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('xyz1')
-            authSession = page.items[13]
+            authSession = page.content[13]
             expect(authSession.token).toEqual('xyz13')
-            authSession = page.items[14]
+            authSession = page.content[14]
             expect(authSession.token).toEqual('abc14')
 
             //page 13, size 15, 195-199
-            page = await authSessionDao.page({ index: 13, size: 15 })
+            page = await authSessionDao.page({ index: 13, pageSize: 15 })
             expect(page.index).toEqual(13)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(5)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(5)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('xyz195')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('abc196')
-            authSession = page.items[3]
+            authSession = page.content[3]
             expect(authSession.token).toEqual('abc198')
-            authSession = page.items[4]
+            authSession = page.content[4]
             expect(authSession.token).toEqual('xyz199')
 
 
 
             //page 0, size 15, desc. 199 - 185
-            page = await authSessionDao.page({ index: 0, size: 15, orderBy: { field: 'createdDatetime', desc: true } })
+            page = await authSessionDao.page({ index: 0, pageSize: 15, orderBy: { field: 'createdDatetime', desc: true } })
             expect(page.index).toEqual(0)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(15)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(15)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('xyz199')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('abc198')
-            authSession = page.items[13]
+            authSession = page.content[13]
             expect(authSession.token).toEqual('abc186')
-            authSession = page.items[14]
+            authSession = page.content[14]
             expect(authSession.token).toEqual('xyz185')
 
             //page 13, size 15, desc. 4 - 0
-            page = await authSessionDao.page({ index: 13, size: 15, orderBy: { field: 'createdDatetime', desc: true } })
+            page = await authSessionDao.page({ index: 13, pageSize: 15, orderBy: { field: 'createdDatetime', desc: true } })
             expect(page.index).toEqual(13)
-            expect(page.total).toEqual(14)
-            expect(page.totalItem).toEqual(200)
-            expect(page.size).toEqual(15)
-            expect(page.items.length).toEqual(5)
-            authSession = page.items[0]
+            expect(page.totalPages).toEqual(14)
+            expect(page.totalItems).toEqual(200)
+            expect(page.pageSize).toEqual(15)
+            expect(page.content.length).toEqual(5)
+            authSession = page.content[0]
             expect(authSession.token).toEqual('abc4')
-            authSession = page.items[1]
+            authSession = page.content[1]
             expect(authSession.token).toEqual('xyz3')
-            authSession = page.items[3]
+            authSession = page.content[3]
             expect(authSession.token).toEqual('xyz1')
-            authSession = page.items[4]
+            authSession = page.content[4]
             expect(authSession.token).toEqual('abc0')
 
             //clean up
