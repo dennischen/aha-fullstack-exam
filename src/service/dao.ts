@@ -1,4 +1,4 @@
-import { AuthSession, AuthSessionCreate, AuthSessionUpdate, EmailVerification, EmailVerificationCreate, EmailVerificationUpdate, User, UserCreate, UserUpdate } from "./model"
+import { AuthSession, AuthSessionCreate, AuthSessionUpdate, EmailVerification, EmailVerificationCreate, EmailVerificationUpdate, User, UserCreate, UserUpdate } from "./entity"
 
 export type Entity = Record<string, any>
 
@@ -6,11 +6,11 @@ export type Pageable<T extends Entity> = {
     /**
      * index of the page to query, e.g. page 0, page 1, page 2
      */
-    index: number
+    index?: number
     /**
      * size of the page, e.g. 20, 50, 100
      */
-    size: number
+    size?: number
 
     /**
      * orderby for the query
@@ -28,6 +28,12 @@ export type Page<T> = {
      * total number of the page from query, e.g. 10, 20
      */
     total: number
+
+    /**
+     * size of the page from query, the size may large than items.length if it reach to last page
+     */
+    size: number
+
 
     /**
      * total number of the items
@@ -70,6 +76,9 @@ export interface UserDao {
 
 }
 
+export type AuthSessionOrderBy = OrderBy<AuthSession>
+export type AuthSessionPagable = Pageable<AuthSession>
+export type AuthSessionPage = Page<AuthSession>
 export interface AuthSessionDao {
 
     create(sessionCreate: AuthSessionCreate): Promise<AuthSession>
@@ -82,12 +91,19 @@ export interface AuthSessionDao {
 
     delete(uid: string): Promise<boolean>
 
+    list(orderBy?: AuthSessionOrderBy | AuthSessionOrderBy[]): Promise<AuthSession[]>
+
+    page(pageable?: AuthSessionPagable): Promise<AuthSessionPage>    
+
     deleteAll(): Promise<void>
 
     count(): Promise<number>
 
 }
 
+export type EmailVerificationOrderBy = OrderBy<EmailVerification>
+export type EmailVerificationPagable = Pageable<EmailVerification>
+export type EmailVerificationPage = Page<EmailVerification>
 export interface EmailVerificationDao {
 
     create(verificationCreate: EmailVerificationCreate): Promise<EmailVerification>
@@ -99,6 +115,10 @@ export interface EmailVerificationDao {
     findByToken(token: string): Promise<EmailVerification | undefined>
 
     delete(uid: string): Promise<boolean>
+
+    list(orderBy?: EmailVerificationOrderBy | EmailVerificationOrderBy[]): Promise<EmailVerification[]>
+
+    page(pageable?: EmailVerificationPagable): Promise<EmailVerificationPage>    
 
     deleteAll(): Promise<void>
 

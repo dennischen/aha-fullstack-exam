@@ -1,5 +1,5 @@
 import { Connection, FieldInfo, MysqlError, Pool, PoolConnection, QueryOptions } from 'mysql'
-import { Entity, OrderBy } from '@/app/service/dao'
+import { Entity, OrderBy } from '@/service/dao'
 
 export async function getConnection(pool: Pool) {
     return new Promise<PoolConnection>((resolve, reject) => {

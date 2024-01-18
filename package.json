@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "lint": "next lint",
-    "test:jest": "jest --verbose",
+    "test:jest": "jest --verbose --runInBand",
     "test:jest:watch": "jest --verbose --watch",
     "test:component:open": "cypress open --component",
     "test:component": "cypress run --component",

@@ -1,9 +1,9 @@
-import { OrderBy, UserDao, UserOrderBy, UserPagable, UserPage } from "../dao"
-import { UserCreate, User, UserUpdate } from "../model"
+import { UserDao, UserOrderBy, UserPagable, UserPage } from "@/service/dao"
+import { User, UserCreate, UserUpdate } from "@/service/entity"
 
 import type { Connection, OkPacket } from 'mysql'
-import { query, toOrderByExpression } from "./mysql-utils"
 import { v4 as uuidv4 } from 'uuid'
+import { query, toOrderByExpression } from "./mysql-utils"
 
 const TABLE = 'AHA_USER'
 
@@ -87,7 +87,7 @@ export class MysqlUserDao implements UserDao {
         return results[0].count
     }
 
-    async list(orderBy?: UserOrderBy | UserOrderBy[]): Promise<User[]> {
+    async list(orderBy: UserOrderBy | UserOrderBy[] = { field: 'createdDatetime' }): Promise<User[]> {
         const orderByExpr = toOrderByExpression(orderBy)
         const { results } = await query<User[]>(this.connection, `SELECT * FROM ${TABLE}${orderByExpr ? ` ORDER BY ${orderByExpr}` : ''}`)
         const users: User[] = []
@@ -129,18 +129,60 @@ export class MysqlUserDao implements UserDao {
             values.push(loginCount)
         }
         if (columns.length !== 0) {
-            const { results } = await query<OkPacket>(this.connection, `UPDATE ${TABLE} SET ${columns.map((column)=>`${column}=?`).join(",")} WHERE uid = ?`, [...values, uid],)
+            const { results } = await query<OkPacket>(this.connection, `UPDATE ${TABLE} SET ${columns.map((column) => `${column}=?`).join(",")} WHERE uid = ?`, [...values, uid],)
             // results.changedRows===1
         }
 
         return this.get(uid)
 
-
-
     }
 
-    page(pageable?: UserPagable): Promise<UserPage> {
-        throw new Error("Method not implemented.")
+    async page(pageable: UserPagable = {}): Promise<UserPage> {
+
+        const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
+        const size = pageable.size && pageable.size > 0 ? pageable.size : NaN
+        const orderBy = pageable.orderBy ?? { field: 'createdDatetime' }
+
+        if (isNaN(size)) {
+            //only 1 page with total size
+            if (index == 0) {
+                const users = await this.list(orderBy)
+                return {
+                    index,
+                    size: users.length,
+                    totalItem: users.length,
+                    total: 1,
+                    items: users
+                }
+            } else {
+                const count = await this.count()
+                return {
+                    index,
+                    size: count,
+                    totalItem: count,
+                    total: 1,
+                    items: []
+                }
+            }
+        } else {
+            const orderByExpr = toOrderByExpression(orderBy)
+            const { results } = await query<User[]>(this.connection, `SELECT * FROM ${TABLE}${orderByExpr ? ` ORDER BY ${orderByExpr}` : ''}${` LIMIT ${size} OFFSET ${index * size}`}`)
+            const users: User[] = []
+            for (const user of results) {
+                users.push(wrapUserFromRowDataPacket(user))
+            }
+            const totalItem = await this.count()
+            const totalPage = (Math.floor(totalItem / size)) + (totalItem % size == 0 ? 0 : 1)
+
+            return {
+                index,
+                size,
+                totalItem,
+                total: totalPage,
+                items: users
+            }
+        }
+
     }
 
 

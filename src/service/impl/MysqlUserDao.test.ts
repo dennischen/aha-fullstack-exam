@@ -1,5 +1,5 @@
-import { MysqlUserDao } from '@/app/service/impl/MysqlUserDao'
-import { getConnection, query as mysqlQuery } from '@/app/service/impl/mysql-utils'
+import { MysqlUserDao } from '@/service/impl/MysqlUserDao'
+import { getConnection, query as mysqlQuery } from '@/service/impl/mysql-utils'
 import fs from 'fs'
 import path from 'path'
 import mysql, { Pool, PoolConfig, PoolConnection } from 'mysql'
@@ -355,7 +355,209 @@ if (!host || !user || !password || !database) {
         })
 
         it('should query pagable correctly', async () => {
+            const userDao = new MysqlUserDao(connection!)
+            let count = await userDao.count()
+            expect(count).toEqual(0)
 
+            for (let i = 0; i < 200; i++) {
+                if (i % 2 === 0) {
+                    const user = await userDao.create({
+                        email: `atticcat${i}@gmail.com`,
+                        displayName: `Dennis Chen${i}`,
+                        hashedPassword: '12345678'
+                    })
+                } else {
+                    const user = await userDao.create({
+                        email: `cola.orange${i}@gmail.com`,
+                        displayName: `ColaOrange${i}`,
+                        hashedPassword: '12345678'
+                    })
+                }
+            }
+
+            count = await userDao.count()
+            expect(count).toEqual(200)
+
+
+            let pageAll = await userDao.page()
+            expect(pageAll.index).toEqual(0)
+            expect(pageAll.total).toEqual(1)
+            expect(pageAll.totalItem).toEqual(200)
+            expect(pageAll.size).toEqual(200)
+            expect(pageAll.items.length).toEqual(200)
+
+            let user = pageAll.items[0]
+            expect(user.displayName).toEqual('Dennis Chen0')
+            user = pageAll.items[1]
+            expect(user.displayName).toEqual('ColaOrange1')
+            user = pageAll.items[198]
+            expect(user.displayName).toEqual('Dennis Chen198')
+            user = pageAll.items[199]
+            expect(user.displayName).toEqual('ColaOrange199')
+
+
+            pageAll = await userDao.page({ orderBy: { field: 'createdDatetime', desc: true } })
+            expect(pageAll.index).toEqual(0)
+            expect(pageAll.total).toEqual(1)
+            expect(pageAll.totalItem).toEqual(200)
+            expect(pageAll.size).toEqual(200)
+            expect(pageAll.items.length).toEqual(200)
+
+
+            user = pageAll.items[0]
+            expect(user.displayName).toEqual('ColaOrange199')
+            user = pageAll.items[1]
+            expect(user.displayName).toEqual('Dennis Chen198')
+            user = pageAll.items[198]
+            expect(user.displayName).toEqual('ColaOrange1')
+            user = pageAll.items[199]
+            expect(user.displayName).toEqual('Dennis Chen0')
+
+
+            //page 0, size 10, 0-9
+            let page = await userDao.page({ size: 10 })
+            expect(page.index).toEqual(0)
+            expect(page.total).toEqual(20)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(10)
+            expect(page.items.length).toEqual(10)
+            user = page.items[0]
+            expect(user.displayName).toEqual('Dennis Chen0')
+            user = page.items[1]
+            expect(user.displayName).toEqual('ColaOrange1')
+            user = page.items[8]
+            expect(user.displayName).toEqual('Dennis Chen8')
+            user = page.items[9]
+            expect(user.displayName).toEqual('ColaOrange9')
+
+            page = await userDao.page({ index: 0, size: 10 })
+            expect(page.index).toEqual(0)
+            expect(page.total).toEqual(20)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(10)
+            expect(page.items.length).toEqual(10)
+            user = page.items[0]
+            expect(user.displayName).toEqual('Dennis Chen0')
+            user = page.items[1]
+            expect(user.displayName).toEqual('ColaOrange1')
+            user = page.items[8]
+            expect(user.displayName).toEqual('Dennis Chen8')
+            user = page.items[9]
+            expect(user.displayName).toEqual('ColaOrange9')
+
+            //page 3, size 10, 30-39
+            page = await userDao.page({ index: 3, size: 10 })
+            expect(page.index).toEqual(3)
+            expect(page.total).toEqual(20)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(10)
+            expect(page.items.length).toEqual(10)
+            user = page.items[0]
+            expect(user.displayName).toEqual('Dennis Chen30')
+            user = page.items[1]
+            expect(user.displayName).toEqual('ColaOrange31')
+            user = page.items[8]
+            expect(user.displayName).toEqual('Dennis Chen38')
+            user = page.items[9]
+            expect(user.displayName).toEqual('ColaOrange39')
+
+
+            //page 19, size 10, 190-199
+            page = await userDao.page({ index: 19, size: 10 })
+            expect(page.index).toEqual(19)
+            expect(page.total).toEqual(20)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(10)
+            expect(page.items.length).toEqual(10)
+            user = page.items[0]
+            expect(user.displayName).toEqual('Dennis Chen190')
+            user = page.items[1]
+            expect(user.displayName).toEqual('ColaOrange191')
+            user = page.items[8]
+            expect(user.displayName).toEqual('Dennis Chen198')
+            user = page.items[9]
+            expect(user.displayName).toEqual('ColaOrange199')
+
+
+            //page 20, size 10, 190-199
+            page = await userDao.page({ index: 20, size: 10 })
+            expect(page.index).toEqual(20)
+            expect(page.total).toEqual(20)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(10)
+            expect(page.items.length).toEqual(0)
+
+
+            //page 0, size 15, 0 - 14
+            page = await userDao.page({ index: 0, size: 15 })
+            expect(page.index).toEqual(0)
+            expect(page.total).toEqual(14)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(15)
+            expect(page.items.length).toEqual(15)
+            user = page.items[0]
+            expect(user.displayName).toEqual('Dennis Chen0')
+            user = page.items[1]
+            expect(user.displayName).toEqual('ColaOrange1')
+            user = page.items[13]
+            expect(user.displayName).toEqual('ColaOrange13')
+            user = page.items[14]
+            expect(user.displayName).toEqual('Dennis Chen14')
+
+            //page 13, size 15, 195-199
+            page = await userDao.page({ index: 13, size: 15 })
+            expect(page.index).toEqual(13)
+            expect(page.total).toEqual(14)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(15)
+            expect(page.items.length).toEqual(5)
+            user = page.items[0]
+            expect(user.displayName).toEqual('ColaOrange195')
+            user = page.items[1]
+            expect(user.displayName).toEqual('Dennis Chen196')
+            user = page.items[3]
+            expect(user.displayName).toEqual('Dennis Chen198')
+            user = page.items[4]
+            expect(user.displayName).toEqual('ColaOrange199')
+
+
+
+            //page 0, size 15, desc. 199 - 185
+            page = await userDao.page({ index: 0, size: 15, orderBy: { field: 'createdDatetime', desc : true} })
+            expect(page.index).toEqual(0)
+            expect(page.total).toEqual(14)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(15)
+            expect(page.items.length).toEqual(15)
+            user = page.items[0]
+            expect(user.displayName).toEqual('ColaOrange199')
+            user = page.items[1]
+            expect(user.displayName).toEqual('Dennis Chen198')
+            user = page.items[13]
+            expect(user.displayName).toEqual('Dennis Chen186')
+            user = page.items[14]
+            expect(user.displayName).toEqual('ColaOrange185')
+
+            //page 13, size 15, desc. 4 - 0
+            page = await userDao.page({ index: 13, size: 15 , orderBy: { field: 'createdDatetime', desc : true} })
+            expect(page.index).toEqual(13)
+            expect(page.total).toEqual(14)
+            expect(page.totalItem).toEqual(200)
+            expect(page.size).toEqual(15)
+            expect(page.items.length).toEqual(5)
+            user = page.items[0]
+            expect(user.displayName).toEqual('Dennis Chen4')
+            user = page.items[1]
+            expect(user.displayName).toEqual('ColaOrange3')
+            user = page.items[3]
+            expect(user.displayName).toEqual('ColaOrange1')
+            user = page.items[4]
+            expect(user.displayName).toEqual('Dennis Chen0')
+
+            //clean up
+            await userDao.deleteAll()
+            count = await userDao.count()
+            expect(count).toEqual(0)
         })
     })
 }

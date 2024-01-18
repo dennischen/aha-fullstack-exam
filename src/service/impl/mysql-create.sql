@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `AHA_AUTH_SESSION` (
   `token` varchar(256) NOT NULL,
   `createdDatetime` bigint(20) NOT NULL,
   `lastAccessDatetime` bigint(20) DEFAULT NULL,
-  `invalidate` BOOLEAN NOT NULL,
+  `invalid` BOOLEAN NOT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `UK_TOKEN` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
