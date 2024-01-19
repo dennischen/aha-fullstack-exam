@@ -19,13 +19,13 @@ export const swaggerOptions: SwaggerOptions = {
         },
         tags: [{
             name: 'pub',
-            description: 'public api for unathenticated user'
+            description: 'Public API for unauthenticated request'
         }, {
             name: 'pri',
-            description: 'api for athenticated user'
+            description: 'API for authenticated user request.'
         }, {
             name: 'adm',
-            description: 'adm api for athenticated administrator'
+            description: 'API for authenticated administrators. Note: In the current version, any authenticated user can call this API.'
         }, {
             name: 'test',
             description: 'api for test'

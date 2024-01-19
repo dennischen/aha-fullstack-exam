@@ -7,26 +7,27 @@ export const dynamic = 'force-dynamic' // defaults to force-static
 import { CommonResponse } from "@/app/api/schema"
 import { NextRequest, NextResponse } from "next/server"
 
+
 /**
  * @swagger
- * /api/v0/pub/authenticate:
+ * /api/v0/adm/users:
  *   post:
- *     description: 'Verify if the authToken is still valid for subsequent API calls.'
- *     operationId: pub#authenticate
+ *     description: "Query multiple user's information with pagination."
+ *     operationId: pri#queryUsers
  *     requestBody:
- *       description: 
+ *       description: 'Pagination information for the query'
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/AuthenticationForm'
+ *             $ref: '#/components/schemas/UserInfoQuery'
  *       required: true
  *     responses:
  *       200:
- *         description: 'The authToken is still valid'
+ *         description: "Successfully retrieve user info list in a page."
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Authentication'
+ *               $ref: '#/components/schemas/UserInfoPage'
  *       400:
  *         description: 'Invalid arguments supplied.'
  *         content:
@@ -34,23 +35,22 @@ import { NextRequest, NextResponse } from "next/server"
  *             schema:
  *               $ref: '#/components/schemas/CommonResponse'
  *       401:
- *         description: 'The authToken is no longer available.'
+ *         description: 'User is not authenticated.'
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/CommonResponse'
+ *     security:
+ *       - authToken: [] 
  *     tags:
- *       - pub
+ *       - adm
  */
-export async function POST(req: NextRequest, res: NextResponse) { 
+export async function POST(req: NextRequest, res: NextResponse) {
     const contentType = req.headers.get('Content-Type')
 
-
-    if (!contentType || contentType.indexOf('application/json') < 0) {   
+    if (!contentType || contentType.indexOf('application/json') < 0) {
         return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
     }
-
-   
 
     return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
 }

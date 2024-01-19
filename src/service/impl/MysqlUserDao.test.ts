@@ -71,7 +71,7 @@ if (!host || !user || !password || !database) {
 
             let { results: result1 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_USER')
             let { results: result2 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_AUTH_SESSION')
-            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_EMAIL_ACTIVATION')
+            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_ACTIVATION')
 
             expect(result1.length).toBe(0)
             expect(result2.length).toBe(0)
@@ -100,7 +100,7 @@ if (!host || !user || !password || !database) {
                 uid,
                 displayName,
                 email,
-                emailActivated,
+                activated,
                 hashedPassword,
                 loginCount,
                 lastAccessDatetime,
@@ -113,7 +113,7 @@ if (!host || !user || !password || !database) {
             expect(displayName).toEqual('Dennis Chen')
             expect(hashedPassword).toEqual('12345678')
             expect(createdDatetime).toBeTruthy()
-            expect(emailActivated).toEqual(false)
+            expect(activated).toEqual(false)
             expect(loginCount).toEqual(0)
             expect(lastAccessDatetime).not.toBeTruthy()
             expect(disabled).toEqual(false)
@@ -129,7 +129,7 @@ if (!host || !user || !password || !database) {
             expect(user1.displayName).toEqual(displayName)
             expect(user1.hashedPassword).toEqual(hashedPassword)
             expect(user1.createdDatetime).toEqual(createdDatetime)
-            expect(user1.emailActivated).toEqual(emailActivated)
+            expect(user1.activated).toEqual(activated)
             expect(user1.loginCount).toEqual(loginCount)
             expect(user1.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user1.disabled).toEqual(disabled)
@@ -140,7 +140,7 @@ if (!host || !user || !password || !database) {
                 const user2 = await userDao.get('nosuchid')
                 fail("should get error")
             } catch (err: any) {
-                console.log("catched error", err.message)
+                
             }
 
             const user2 = await userDao.findByEmail('atticcat@gmail.com')
@@ -152,7 +152,7 @@ if (!host || !user || !password || !database) {
             expect(user2!.displayName).toEqual(displayName)
             expect(user2!.hashedPassword).toEqual(hashedPassword)
             expect(user2!.createdDatetime).toEqual(createdDatetime)
-            expect(user2!.emailActivated).toEqual(emailActivated)
+            expect(user2!.activated).toEqual(activated)
             expect(user2!.loginCount).toEqual(loginCount)
             expect(user2!.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user2!.disabled).toEqual(disabled)
@@ -169,7 +169,7 @@ if (!host || !user || !password || !database) {
             expect(user3!.displayName).toEqual(displayName)
             expect(user3!.hashedPassword).toEqual(hashedPassword)
             expect(user3!.createdDatetime).toEqual(createdDatetime)
-            expect(user3!.emailActivated).toEqual(emailActivated)
+            expect(user3!.activated).toEqual(activated)
             expect(user3!.loginCount).toEqual(loginCount)
             expect(user3!.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user3!.disabled).toEqual(disabled)
@@ -287,7 +287,7 @@ if (!host || !user || !password || !database) {
                 })
                 fail("should get error")
             } catch (err: any) {
-                console.log(err.message)
+                
             }
 
 
@@ -315,7 +315,7 @@ if (!host || !user || !password || !database) {
             expect(user.displayName).toEqual('Mr. D')
             expect(user.hashedPassword).toEqual(user1.hashedPassword)
             expect(user.createdDatetime).toEqual(user1.createdDatetime)
-            expect(user.emailActivated).toEqual(user1.emailActivated)
+            expect(user.activated).toEqual(user1.activated)
             expect(user.loginCount).toEqual(user1.loginCount)
             expect(user.lastAccessDatetime).toEqual(user1.lastAccessDatetime)
             expect(user.disabled).toEqual(user1.disabled)
@@ -324,7 +324,7 @@ if (!host || !user || !password || !database) {
             user = await userDao.update(user1.uid, {
                 loginCount: 20,
                 disabled: true,
-                emailActivated: true,
+                activated: true,
                 displayName: 'Dr. D',
                 hashedPassword: '5678',
                 lastAccessDatetime: 7788
@@ -334,7 +334,7 @@ if (!host || !user || !password || !database) {
             expect(user.displayName).toEqual('Dr. D')
             expect(user.hashedPassword).toEqual('5678')
             expect(user.createdDatetime).toEqual(user1.createdDatetime)
-            expect(user.emailActivated).toEqual(true)
+            expect(user.activated).toEqual(true)
             expect(user.loginCount).toEqual(20)
             expect(user.lastAccessDatetime).toEqual(7788)
             expect(user.disabled).toEqual(true)

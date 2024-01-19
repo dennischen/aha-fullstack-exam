@@ -75,15 +75,8 @@ export type SigninForm = {
  *         authToken: 
  *           type: string
  *           description: 'Authentication token for user.'
- *         email: 
- *           type: string
- *           description: 'User email address.'
- *         displayName: 
- *           type: string
- *           description: 'User display name.'
- *         activated: 
- *           type: boolean
- *           description: 'User email is activated or not'
+ *         profile:
+ *           $ref : '#/components/schemas/Profile'
  *       required:
  *         - authToken
  *         - email
@@ -92,9 +85,7 @@ export type SigninForm = {
  */
 export type Authentication = {
     authToken: string,
-    email: string,
-    displayName: string
-    activated: boolean
+    profile: Profile
 }
 
 
@@ -120,16 +111,16 @@ export type AuthenticationForm = {
  * @swagger
  * components:
  *   schemas:
- *     EmailActivationForm:
+ *     ActivationForm:
  *       type: object
  *       properties:
  *         token: 
  *           type: string
- *           description: 'Email activation token.'
+ *           description: 'activation token.'
  *       required:
  *         - token
  */
-export type EmailActivationForm = {
+export type ActivationForm = {
     token: string
 }
 
@@ -144,6 +135,9 @@ export type EmailActivationForm = {
  *         message: 
  *           type: string
  *           description: 'Descriptive message from the server.'
+ *         code: 
+ *           type: string
+ *           description: 'Indicates system definded code of this response.'
  *         error: 
  *           type: boolean
  *           description: 'Indicates whether an error occurred.'
@@ -152,9 +146,35 @@ export type EmailActivationForm = {
  */
 export type CommonResponse = {
     message: string
+    code?: string
     error?: boolean
 }
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Profile:
+ *       type: object
+ *       properties:
+ *         email: 
+ *           type: string
+ *           description: 'User email address.'
+ *         displayName: 
+ *           type: string
+ *           description: 'User display name.'
+ *         activated: 
+ *           type: boolean
+ *           description: 'User is activated or not'
+ *       required:
+ *         - email
+ *         - displayName
+ */
+export type Profile = {
+    email: string,
+    displayName: string
+    activated: boolean    
+}
 
 /**
  * @swagger

@@ -1,4 +1,4 @@
-import { AuthSession, AuthSessionCreate, AuthSessionUpdate, EmailActivation, EmailActivationCreate, EmailActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
+import { AuthSession, AuthSessionCreate, AuthSessionUpdate, Activation, ActivationCreate, ActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
 
 export type Entity = Record<string, any>
 
@@ -106,24 +106,24 @@ export interface AuthSessionDao {
 
 }
 
-export type EmailActivationOrderBy = OrderBy<EmailActivation>
-export type EmailActivationPagable = Pageable<EmailActivation>
-export type EmailActivationPage = Page<EmailActivation>
-export interface EmailActivationDao {
+export type ActivationOrderBy = OrderBy<Activation>
+export type ActivationPagable = Pageable<Activation>
+export type ActivationPage = Page<Activation>
+export interface ActivationDao {
 
-    create(activationCreate: EmailActivationCreate): Promise<EmailActivation>
+    create(activationCreate: ActivationCreate): Promise<Activation>
 
-    update(uid: string, activationUpdate: EmailActivationUpdate): Promise<EmailActivation>
+    update(uid: string, activationUpdate: ActivationUpdate): Promise<Activation>
 
-    get(uid: string): Promise<EmailActivation>
+    get(uid: string): Promise<Activation>
 
-    findByToken(token: string): Promise<EmailActivation | undefined>
+    findByToken(token: string): Promise<Activation | undefined>
 
     delete(uid: string): Promise<boolean>
 
-    list(orderBy?: EmailActivationOrderBy | EmailActivationOrderBy[]): Promise<EmailActivation[]>
+    list(orderBy?: ActivationOrderBy | ActivationOrderBy[]): Promise<Activation[]>
 
-    page(pageable?: EmailActivationPagable): Promise<EmailActivationPage>    
+    page(pageable?: ActivationPagable): Promise<ActivationPage>    
 
     deleteAll(): Promise<void>
 

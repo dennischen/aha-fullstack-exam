@@ -72,7 +72,7 @@ if (!host || !user || !password || !database) {
 
             let { results: result1 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_USER')
             let { results: result2 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_AUTH_SESSION')
-            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_EMAIL_ACTIVATION')
+            let { results: result3 } = await mysqlQuery<any[]>(connection!, 'SELECT * FROM AHA_ACTIVATION')
 
             expect(result1.length).toBe(0)
             expect(result2.length).toBe(0)
@@ -142,7 +142,7 @@ if (!host || !user || !password || !database) {
                 })
                 fail("should get error")
             } catch (err: any) {
-                console.log(err.message)
+                
             }
 
 
@@ -150,7 +150,7 @@ if (!host || !user || !password || !database) {
                 const authSession2 = await authSessionDao.get('nosuchid')
                 fail("should get error")
             } catch (err: any) {
-                console.log("catched error", err.message)
+                
             }
 
             const authSession2 = await authSessionDao.findByToken('abcdef')
@@ -288,7 +288,7 @@ if (!host || !user || !password || !database) {
                 })
                 fail("should get error")
             } catch (err: any) {
-                console.log(err.message)
+                
             }
 
 

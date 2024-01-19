@@ -15,7 +15,7 @@ function wrapUserFromRowDataPacket(user: User /*RowDataPacket*/) {
         createdDatetime: user.createdDatetime,
         loginCount: user.loginCount,
         disabled: !!user.disabled,//bit -> boolean
-        emailActivated: !!user.emailActivated,//bit -> boolean
+        activated: !!user.activated,//bit -> boolean
         displayName: user.displayName,
         hashedPassword: user.hashedPassword,
         lastAccessDatetime: user.lastAccessDatetime ?? undefined
@@ -40,7 +40,7 @@ export class MysqlUserDao implements UserDao {
             createdDatetime: new Date().getTime(),
             loginCount: 0,
             disabled: userCreate.disabled ?? false,
-            emailActivated: userCreate.emailAcativated ?? false,
+            activated: userCreate.acativated ?? false,
             displayName: userCreate.displayName,
             hashedPassword: userCreate.hashedPassword,
             lastAccessDatetime: undefined
@@ -100,7 +100,7 @@ export class MysqlUserDao implements UserDao {
     async update(uid: string, userUpdate: UserUpdate): Promise<User> {
         // const oldUser = this.get(uid)
 
-        const { disabled, displayName, emailActivated, hashedPassword, lastAccessDatetime, loginCount } = userUpdate
+        const { disabled, displayName, activated, hashedPassword, lastAccessDatetime, loginCount } = userUpdate
         const columns: string[] = []
         const values: any[] = []
 
@@ -112,9 +112,9 @@ export class MysqlUserDao implements UserDao {
             columns.push('displayName')
             values.push(displayName)
         }
-        if (emailActivated !== undefined) {
-            columns.push('emailActivated')
-            values.push(emailActivated)
+        if (activated !== undefined) {
+            columns.push('activated')
+            values.push(activated)
         }
         if (hashedPassword !== undefined) {
             columns.push('hashedPassword')
