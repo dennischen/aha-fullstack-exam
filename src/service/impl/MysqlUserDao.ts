@@ -40,7 +40,7 @@ export class MysqlUserDao implements UserDao {
             createdDatetime: new Date().getTime(),
             loginCount: 0,
             disabled: userCreate.disabled ?? false,
-            activated: userCreate.acativated ?? false,
+            activated: userCreate.activated ?? false,
             displayName: userCreate.displayName,
             hashedPassword: userCreate.hashedPassword,
             lastAccessDatetime: undefined
