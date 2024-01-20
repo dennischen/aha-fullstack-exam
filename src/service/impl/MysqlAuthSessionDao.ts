@@ -1,9 +1,10 @@
-import { AuthSessionDao, AuthSessionOrderBy, AuthSessionPagable, AuthSessionPage } from "@/service/dao"
-import { AuthSession, AuthSessionCreate, AuthSessionUpdate } from "@/service/entity"
+import { AuthSessionDao, AuthSessionOrderBy, AuthSessionPagable, AuthSessionPage, PageableSchema } from "@/service/dao"
+import { AuthSession, AuthSessionCreate, AuthSessionCreateSchema, AuthSessionUpdate, AuthSessionUpdateSchema } from "@/service/entity"
 
+import { validator } from "@/service"
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
-import { query, toOrderByExpression } from "./mysql-utils"
+import { checkArgument, query, toOrderByExpression } from "./utils"
 
 const TABLE = 'AHA_AUTH_SESSION'
 
@@ -28,6 +29,8 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
     }
 
     async create(authSessionCreate: AuthSessionCreate): Promise<AuthSession> {
+
+        checkArgument(validator, AuthSessionCreateSchema, authSessionCreate)
 
         const uid = uuidv4()
         const now = new Date().getTime();
@@ -93,7 +96,8 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
     }
 
     async update(uid: string, authSessionUpdate: AuthSessionUpdate): Promise<AuthSession> {
-        // const oldAuthSession = this.get(uid)
+        
+        checkArgument(validator, AuthSessionUpdateSchema, authSessionUpdate)
 
         const { lastAccessDatetime, invalid } = authSessionUpdate
         const columns: string[] = []
@@ -117,6 +121,8 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
     }
 
     async page(pageable: AuthSessionPagable = {}): Promise<AuthSessionPage> {
+
+        checkArgument(validator, PageableSchema, pageable)
 
         const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
         const size = pageable.pageSize && pageable.pageSize > 0 ? pageable.pageSize : NaN

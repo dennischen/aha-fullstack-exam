@@ -1,9 +1,10 @@
-import { ActivationDao, ActivationOrderBy, ActivationPagable, ActivationPage } from "@/service/dao"
-import { Activation, ActivationCreate, ActivationUpdate } from "@/service/entity"
+import { ActivationDao, ActivationOrderBy, ActivationPagable, ActivationPage, PageableSchema } from "@/service/dao"
+import { Activation, ActivationCreate, ActivationCreateSchema, ActivationUpdate, ActivationUpdateSchema } from "@/service/entity"
 
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
-import { query, toOrderByExpression } from "./mysql-utils"
+import { checkArgument, query, toOrderByExpression } from "./utils"
+import { validator } from ".."
 
 const TABLE = 'AHA_ACTIVATION'
 
@@ -27,6 +28,8 @@ export class MysqlActivationDao implements ActivationDao {
     }
 
     async create(activationCreate: ActivationCreate): Promise<Activation> {
+
+        checkArgument(validator, ActivationCreateSchema, activationCreate)
 
         const uid = uuidv4()
         const now = new Date().getTime();
@@ -90,7 +93,8 @@ export class MysqlActivationDao implements ActivationDao {
     }
 
     async update(uid: string, activationUpdate: ActivationUpdate): Promise<Activation> {
-        // const oldActivation = this.get(uid)
+        
+        checkArgument(validator, ActivationUpdateSchema, activationUpdate)
 
         const { activatedDatetime } = activationUpdate
         const columns: string[] = []
@@ -111,6 +115,8 @@ export class MysqlActivationDao implements ActivationDao {
     }
 
     async page(pageable: ActivationPagable = {}): Promise<ActivationPage> {
+
+        checkArgument(validator, PageableSchema, pageable)
 
         const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
         const size = pageable.pageSize && pageable.pageSize > 0 ? pageable.pageSize : NaN

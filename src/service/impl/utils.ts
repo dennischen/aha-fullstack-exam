@@ -1,5 +1,7 @@
 import { Connection, FieldInfo, MysqlError, Pool, PoolConnection, QueryOptions } from 'mysql'
 import { Entity, OrderBy } from '@/service/dao'
+import { Schema, Validator } from 'jsonschema'
+import { ServiceError } from '@/service'
 
 export async function getConnection(pool: Pool) {
     return new Promise<PoolConnection>((resolve, reject) => {
@@ -71,4 +73,15 @@ export function toOrderByExpression<T extends Entity>(orderBy?: OrderBy<T> | Ord
         return ''
     }
     return (Array.isArray(orderBy) ? orderBy : [orderBy]).map((orderBy) => `${String(orderBy.field)} ${orderBy.desc ? 'DESC' : 'ASC'}`).join(',')
+}
+
+
+export function checkArgument(validator: Validator, schema: Schema, instance: any) {
+    if(!instance){
+        throw new ServiceError('argument instance is undefined', 400)
+    }
+    const r = validator.validate(instance, schema)
+    if (!r.valid) {
+        throw new ServiceError(r.errors.map((err) => `${err.property} ${err.message}`).join(", "), 400)
+    }
 }

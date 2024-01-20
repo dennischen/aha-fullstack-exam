@@ -1,12 +1,12 @@
-import { UserDao, UserOrderBy, UserPagable, UserPage } from "@/service/dao"
-import { User, UserCreate, UserUpdate } from "@/service/entity"
+import { validator } from "@/service"
+import { PageableSchema, UserDao, UserOrderBy, UserPagable, UserPage } from "@/service/dao"
+import { User, UserCreate, UserCreateSchema, UserUpdate, UserUpdateSchema } from "@/service/entity"
 
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
-import { query, toOrderByExpression } from "./mysql-utils"
+import { checkArgument, query, toOrderByExpression } from "./utils"
 
 const TABLE = 'AHA_USER'
-
 
 function wrapUserFromRowDataPacket(user: User /*RowDataPacket*/) {
     return {
@@ -32,6 +32,8 @@ export class MysqlUserDao implements UserDao {
 
     async create(userCreate: UserCreate): Promise<User> {
 
+        checkArgument(validator, UserCreateSchema, userCreate)
+        
         const uid = uuidv4()
 
         const user: User = {
@@ -98,7 +100,8 @@ export class MysqlUserDao implements UserDao {
     }
 
     async update(uid: string, userUpdate: UserUpdate): Promise<User> {
-        // const oldUser = this.get(uid)
+        
+        checkArgument(validator, UserUpdateSchema, userUpdate)
 
         const { disabled, displayName, activated, hashedPassword, lastAccessDatetime, loginCount } = userUpdate
         const columns: string[] = []
@@ -138,6 +141,8 @@ export class MysqlUserDao implements UserDao {
     }
 
     async page(pageable: UserPagable = {}): Promise<UserPage> {
+
+        checkArgument(validator, PageableSchema, pageable)
 
         const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
         const size = pageable.pageSize && pageable.pageSize > 0 ? pageable.pageSize : NaN

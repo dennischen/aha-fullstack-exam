@@ -4,7 +4,7 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 
 
-import { CommonResponse } from "@/app/api/schema"
+import { CommonResponse } from "@/app/api/v0/dto"
 import { NextRequest, NextResponse } from "next/server"
 
 /**

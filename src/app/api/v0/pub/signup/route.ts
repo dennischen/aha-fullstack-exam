@@ -4,7 +4,9 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 
 
-import { CommonResponse } from "@/app/api/schema"
+import { ApiContext, validator } from "@/app/api/v0"
+import { CommonResponse, SignupForm, SignupFormSchema } from "@/app/api/v0/dto"
+import { checkJson, checkArgument, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 /**
@@ -43,14 +45,10 @@ import { NextRequest, NextResponse } from "next/server"
  *       - pub
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    const contentType = req.headers.get('Content-Type')
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await checkJson(req)
+        const signupForm = await checkArgument(validator, SignupFormSchema, arg) as SignupForm
 
-
-    if (!contentType || contentType.indexOf('application/json') < 0) {
-        return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
-    }
-
-
-
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }

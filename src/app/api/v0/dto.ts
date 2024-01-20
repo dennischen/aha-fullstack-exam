@@ -1,3 +1,4 @@
+import { Schema } from "jsonschema"
 
 /**
  * @swagger
@@ -37,6 +38,29 @@ export type IdObject = {
  *         - displayName
  *         - password
  */
+export const SignupFormSchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/SignupForm',
+    type: 'object',
+    properties: {
+        email: {
+            type: 'string',
+            format: 'email',
+            minLength: 4,
+            maxLength: 256
+        },
+        displayName: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 128
+        },
+        password: {
+            type: 'string'
+        }
+    },
+    required: ['email', 'displayName', 'password'],
+    additionalProperties: false
+}
 export type SignupForm = {
     email: string,
     displayName: string,
@@ -60,6 +84,21 @@ export type SignupForm = {
  *         - email
  *         - password
  */
+export const SigninFormSchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/SigninForm',
+    type: 'object',
+    properties: {
+        email: {
+            type: 'string'
+        },
+        password: {
+            type: 'string'
+        }
+    },
+    required: ['email', 'password'],
+    additionalProperties: false
+}
 export type SigninForm = {
     email: string,
     password: string
@@ -102,6 +141,18 @@ export type Authentication = {
  *       required:
  *         - authToken
  */
+export const AuthenticationFormSchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/AuthenticationForm',
+    type: 'object',
+    properties: {
+        authToken: {
+            type: 'string'
+        }
+    },
+    required: ['authToken'],
+    additionalProperties: false
+}
 export type AuthenticationForm = {
     authToken: string
 }
@@ -120,6 +171,18 @@ export type AuthenticationForm = {
  *       required:
  *         - token
  */
+export const ActivationFormSchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/ActivationForm',
+    type: 'object',
+    properties: {
+        token: {
+            type: 'string'
+        }
+    },
+    required: ['token'],
+    additionalProperties: false
+}
 export type ActivationForm = {
     token: string
 }
@@ -173,7 +236,7 @@ export type CommonResponse = {
 export type Profile = {
     email: string,
     displayName: string
-    activated: boolean    
+    activated: boolean
 }
 
 /**
@@ -189,6 +252,20 @@ export type Profile = {
  *       required:
  *         - displayName
  */
+export const UpdateProfileFormSchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/',
+    type: 'object',
+    properties: {
+        displayName: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 128
+        }
+    },
+    required: ['displayName'],
+    additionalProperties: false
+}
 export type UpdateProfileForm = {
     displayName: string
 }
@@ -210,6 +287,21 @@ export type UpdateProfileForm = {
  *         - password
  *         - newPassword
  */
+export const UpdatePasswordFormSchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/UpdatePasswordForm',
+    type: 'object',
+    properties: {
+        password: {
+            type: 'string'
+        },
+        newPassword: {
+            type: 'string'
+        }
+    },
+    required: ['password', 'newPassword'],
+    additionalProperties: false
+}
 export type UpdatePasswordForm = {
     password: string
     newPassword: string
@@ -297,6 +389,22 @@ export type UserInfo = {
  *       required:
  *         - field
  */
+export const OrderBySchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/OrderBy',
+    type: 'object',
+    properties: {
+        field: {
+            type: 'string',
+            minLength: 1
+        },
+        desc: {
+            type: 'boolean'
+        }
+    },
+    required: ['field'],
+    additionalProperties: false
+}
 export type OrderBy = {
     field: string,
     desc?: boolean,
@@ -312,18 +420,38 @@ export type OrderBy = {
  *         index: 
  *           type: number
  *           description: 'The page index, zero-based'
- *         size: 
+ *         pageSize: 
  *           type: number
  *           description: 'The item size per page.'
  *         orderBy:
  *           $ref : '#/components/schemas/OrderBy'
  *       required:
  *         - index
- *         - size
+ *         - pageSize
  */
+export const UserInfoQuerySchema: Schema = {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/UserInfoQuery',
+    type: 'object',
+    properties: {
+        index: {
+            type: 'number',
+            minimum: 0
+        },
+        pageSize: {
+            type: 'number',
+            minimum: 1
+        },
+        orderBy: {
+            $ref: '/OrderBy'
+        }
+    },
+    required: ['index', 'pageSize'],
+    additionalProperties: false,
+}
 export type UserInfoQuery = {
     index: number,
-    size: number,
+    pageSize: number,
     orderBy?: OrderBy
 }
 
@@ -338,15 +466,18 @@ export type UserInfoQuery = {
  *         index: 
  *           type: number
  *           description: 'Index of the page from the query.'
- *         size: 
+ *         pageSize: 
  *           type: number
  *           description: 'Size of the page from the query.'
- *         total:
+ *         totalPages:
  *           type: number
  *           description: 'Total number of pages in the query.'
- *         totalItem:
+ *         totalItems:
  *           type: number
  *           description: 'Total number of items.'
+ *         numItems:
+ *           type: number
+ *           description: 'Number of items in this page'
  *         content:
  *           type: array
  *           description: 'Item instances in this page.'
@@ -354,15 +485,17 @@ export type UserInfoQuery = {
  *             $ref : '#/components/schemas/UserInfo'
  *       required:
  *         - index
- *         - size
- *         - total
- *         - totalItem
+ *         - pageSize
+ *         - totalPages
+ *         - totalItems
+ *         - numItems
  *         - content
  */
 export type UserInfoPage = {
     index: number,
-    size: number,
-    total: number,
-    totalItem: number
+    pageSize: number,
+    totalPages: number,
+    totalItems: number,
+    numItems: number,
     content: UserInfo[]
 }

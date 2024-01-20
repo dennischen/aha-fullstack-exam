@@ -1,6 +1,39 @@
+import { Schema } from "jsonschema"
 import { AuthSession, AuthSessionCreate, AuthSessionUpdate, Activation, ActivationCreate, ActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
 
 export type Entity = Record<string, any>
+
+
+export const PageableSchema: Schema = {
+    $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/Pageable',
+    type: 'object',
+    properties: {
+        index: {
+            type: 'number',
+            minimum: 0
+
+        },
+        pageSize: {
+            type: 'number',
+            minimum: 1
+        },
+        orderBy: {
+            anyOf: [
+                {
+                    $ref: '/OrderBy'
+                },
+                {
+                    type: 'array',
+                    items: {
+                        $ref: '/OrderBy'
+                    }
+                }
+            ]
+        }
+    },
+    additionalProperties: false
+}
 
 export type Pageable<T extends Entity> = {
     /**
@@ -51,6 +84,21 @@ export type Page<T> = {
     content: T[]
 }
 
+export const OrderBySchema: Schema = {
+    $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/OrderBy',
+    type: 'object',
+    properties: {
+        field: {
+            type: 'string'
+        },
+        desc: {
+            type: 'boolean'
+        }
+    },
+    required: ['field'],
+    additionalProperties: false
+}
 export type OrderBy<T extends Entity, F = keyof T> = {
     field: F,
     desc?: boolean
@@ -98,7 +146,7 @@ export interface AuthSessionDao {
 
     list(orderBy?: AuthSessionOrderBy | AuthSessionOrderBy[]): Promise<AuthSession[]>
 
-    page(pageable?: AuthSessionPagable): Promise<AuthSessionPage>    
+    page(pageable?: AuthSessionPagable): Promise<AuthSessionPage>
 
     deleteAll(): Promise<void>
 
@@ -123,7 +171,7 @@ export interface ActivationDao {
 
     list(orderBy?: ActivationOrderBy | ActivationOrderBy[]): Promise<Activation[]>
 
-    page(pageable?: ActivationPagable): Promise<ActivationPage>    
+    page(pageable?: ActivationPagable): Promise<ActivationPage>
 
     deleteAll(): Promise<void>
 

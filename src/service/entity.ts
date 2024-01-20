@@ -1,5 +1,4 @@
-import { Schema } from "jsonschema"
-
+import { Schema, Validator } from "jsonschema"
 
 export type User = {
     uid: string
@@ -16,6 +15,7 @@ export type User = {
 
 export const UserCreateSchema: Schema = {
     $schema: "http://json-schema.org/draft-07/schema#",
+    id: '/UserCreate',
     type: 'object',
     properties: {
         email: {
@@ -54,6 +54,7 @@ export type UserCreate = {
 
 export const UserUpdateSchema: Schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    id: '/UserUpdate',
     type: 'object',
     properties: {
         activated: {
@@ -69,12 +70,14 @@ export const UserUpdateSchema: Schema = {
             maxLength: 256
         },
         loginCount: {
-            type: 'number'
+            type: 'number',
+            minimum: 0
         },
         lastAccessDatetime: {
             anyOf: [
                 {
-                    type: 'number'
+                    type: 'number',
+                    minimum: 0
                 },
                 {
                     type: 'null'
@@ -112,6 +115,7 @@ export type AuthSession = {
 
 export const AuthSessionCreateSchema: Schema = {
     $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/AuthSessionCreate',
     type: 'object',
     properties: {
         userUid: {
@@ -134,10 +138,12 @@ export type AuthSessionCreate = {
 
 export const AuthSessionUpdateSchema: Schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    id: '/AuthSessionUpdate',
     type: 'object',
     properties: {
         lastAccessDatetime: {
-            type: 'number'
+            type: 'number',
+            minimum: 0
         },
         invalid: {
             type: 'boolean'
@@ -162,6 +168,7 @@ export type Activation = {
 
 export const ActivationCreateSchema: Schema = {
     $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/ActivationCreate',
     type: 'object',
     properties: {
         userUid: {
@@ -184,12 +191,14 @@ export type ActivationCreate = {
 
 export const ActivationUpdateSchema: Schema = {
     $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/ActivationUpdate',
     type: 'object',
     properties: {
         activatedDatetime: {
             anyOf: [
                 {
-                    type: 'number'
+                    type: 'number',
+                    minimum: 0
                 },
                 {
                     type: 'null'
