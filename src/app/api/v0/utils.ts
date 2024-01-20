@@ -3,10 +3,21 @@ import { ApiContext, ApiError } from "."
 import { NextRequest } from "next/server"
 import { ServiceError } from "@/service"
 import { CommonResponse } from "./dto"
+import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFormSchema, SignupFormSchema, UpdatePasswordFormSchema, UpdateProfileFormSchema, UserInfoQuerySchema } from "./dto"
 
 
-export async function checkArgument(validator: Validator, schema: Schema, instance: any) {
-    const r = validator.validate(instance, schema, {required: true})
+export const dtoSchemaValidator = new Validator()
+dtoSchemaValidator.addSchema(OrderBySchema)
+dtoSchemaValidator.addSchema(ActivationFormSchema)
+dtoSchemaValidator.addSchema(AuthenticationFormSchema)
+dtoSchemaValidator.addSchema(SigninFormSchema)
+dtoSchemaValidator.addSchema(SignupFormSchema)
+dtoSchemaValidator.addSchema(UpdatePasswordFormSchema)
+dtoSchemaValidator.addSchema(UpdateProfileFormSchema)
+dtoSchemaValidator.addSchema(UserInfoQuerySchema)
+
+export async function validateApiArgument<T>(instance: T, schema: Schema) {
+    const r = dtoSchemaValidator.validate(instance, schema, { required: true })
     if (!r.valid) {
         throw new ApiError(r.errors.map((err) => `${err.property} ${err.message}`).join(", "), 400)
     }
@@ -14,7 +25,7 @@ export async function checkArgument(validator: Validator, schema: Schema, instan
 }
 
 
-export async function checkJson(req: NextRequest) {
+export async function validateJson(req: NextRequest) {
     const contentType = req.headers.get('Content-Type')
 
     if (!contentType || contentType.indexOf('application/json') < 0) {
@@ -23,7 +34,7 @@ export async function checkJson(req: NextRequest) {
 
     try {
         return await req.json()
-    } catch (err: any) { 
+    } catch (err: any) {
         //json parse error only?
         throw new ApiError(err, 400)
     }

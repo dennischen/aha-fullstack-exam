@@ -5,8 +5,8 @@ import { SampleService } from './SampleService'
 
 import { Schema, Validator } from 'jsonschema'
 import { UserCreate, UserCreateSchema } from '@/service/entity'
-import { checkArgument } from '@/service/impl/utils'
-import { ServiceError, validator } from '@/service'
+import { ServiceError } from '@/service'
+import { validateServiceArgument } from '@/service/utils'
 
 const mockGetUser = jest.fn(() => Promise.resolve({ id: 1, name: 'John Doe' }))
 jest.mock('./SampleService', () => {
@@ -38,16 +38,17 @@ describe('Sample Test', () => {
 
         let userCreate: UserCreate = {
             email: 'a@b.c.',
-            displayName: '',
+            displayName: 'Dennis Chen',
             hashedPassword: ''
         }
         try {
-            checkArgument(validator, UserCreateSchema, userCreate)
+            await validateServiceArgument(userCreate, UserCreateSchema)
+            fail('should get service error')
         } catch (err: any) {
             if(err instanceof ServiceError){
                 console.log(">>>>", err.code, err.message)
             }else{
-                console.log(">>>>", err)
+                fail('muse be a service err but get'+JSON.stringify(err))
             }
         }
 

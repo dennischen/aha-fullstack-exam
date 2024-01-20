@@ -1,11 +1,10 @@
 
-
+import { ApiContext } from "@/app/api/v0"
+import { CommonResponse, SignupForm, SignupFormSchema, UpdateProfileForm, UpdateProfileFormSchema } from "@/app/api/v0/dto"
+import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
-
-
-import { CommonResponse } from "@/app/api/v0/dto"
-import { NextRequest, NextResponse } from "next/server"
 
 /**
  * @swagger
@@ -32,9 +31,20 @@ import { NextRequest, NextResponse } from "next/server"
  *       - pri
  */
 export async function GET(req: NextRequest, res: NextResponse) {
-    
 
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await validateJson(req)
+        const signupForm: SignupForm = await validateApiArgument(arg, SignupFormSchema)
+
+        /**
+         * 1. Get the authToken from the header.
+         * 2. Check if the authentication session exists and is still valid.
+         * 3. Update the lastAccessDatetime of the authentication and user.
+         * 4. Respond with the profile.
+         */
+
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }
 
 /**
@@ -75,11 +85,20 @@ export async function GET(req: NextRequest, res: NextResponse) {
  *       - pri
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    const contentType = req.headers.get('Content-Type')
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await validateJson(req)
+        const updateProfileForm: UpdateProfileForm = await validateApiArgument(arg, UpdateProfileFormSchema)
 
-    if (!contentType || contentType.indexOf('application/json') < 0) {
-        return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
-    }
+        /**
+         * 1. Get the authToken from the header.
+         * 2. Check if the authentication session exists and is still valid.
+         * 3. Update the user's display name.
+         * 4. Update the lastAccessDatetime of the authentication and user.
+         * 5. Respond with the updated profile.
+         */
 
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+
+
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }

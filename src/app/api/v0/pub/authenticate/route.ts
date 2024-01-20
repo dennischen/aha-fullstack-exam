@@ -1,11 +1,9 @@
-
-
+import { ApiContext } from "@/app/api/v0"
+import { AuthenticationForm, AuthenticationFormSchema, CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
+import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
-
-
-import { CommonResponse } from "@/app/api/v0/dto"
-import { NextRequest, NextResponse } from "next/server"
 
 /**
  * @swagger
@@ -42,15 +40,18 @@ import { NextRequest, NextResponse } from "next/server"
  *     tags:
  *       - pub
  */
-export async function POST(req: NextRequest, res: NextResponse) { 
-    const contentType = req.headers.get('Content-Type')
+export async function POST(req: NextRequest, res: NextResponse) {
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await validateJson(req)
+        const authenticationForm: AuthenticationForm = await validateApiArgument(arg, AuthenticationFormSchema)
+
+        /**
+         * 1. Check if the authentication session exists and is still valid (logout will invalidate it).
+         * 2. Update the lastAccessDatetime of the authentication and user.
+         * 3. Respond with the authentication details.
+         */
 
 
-    if (!contentType || contentType.indexOf('application/json') < 0) {   
-        return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
-    }
-
-   
-
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }

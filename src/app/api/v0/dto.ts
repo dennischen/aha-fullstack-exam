@@ -1,5 +1,8 @@
 import { Schema } from "jsonschema"
 
+
+const displayNamePattern = /^(?!\s)(.*\S)$/g
+
 /**
  * @swagger
  * components:
@@ -51,8 +54,10 @@ export const SignupFormSchema: Schema = {
         },
         displayName: {
             type: 'string',
+            pattern: displayNamePattern,
             minLength: 1,
             maxLength: 128
+            
         },
         password: {
             type: 'string'
@@ -259,6 +264,7 @@ export const UpdateProfileFormSchema: Schema = {
     properties: {
         displayName: {
             type: 'string',
+            pattern: displayNamePattern,
             minLength: 1,
             maxLength: 128
         }

@@ -3,8 +3,9 @@
 
 export const dynamic = 'force-dynamic' // defaults to force-static
 
-
-import { CommonResponse } from "@/app/api/v0/dto"
+import { ApiContext } from "@/app/api/v0"
+import { CommonResponse, UserInfoQuery, UserInfoQuerySchema } from "@/app/api/v0/dto"
+import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 
@@ -46,11 +47,19 @@ import { NextRequest, NextResponse } from "next/server"
  *       - adm
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    const contentType = req.headers.get('Content-Type')
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await validateJson(req)
+        const userInfoQuery: UserInfoQuery = await validateApiArgument(arg, UserInfoQuerySchema)
 
-    if (!contentType || contentType.indexOf('application/json') < 0) {
-        return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
-    }
+        /**
+         * 1. Get the authToken from the header.
+         * 2. Check if the authentication session exists and is still valid.
+         * 3. Update the lastAccessDatetime of the authentication and user.
+         * 4. Respond with the query result.
+         */
 
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+
+
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }

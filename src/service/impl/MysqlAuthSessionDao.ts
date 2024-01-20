@@ -1,10 +1,10 @@
 import { AuthSessionDao, AuthSessionOrderBy, AuthSessionPagable, AuthSessionPage, PageableSchema } from "@/service/dao"
 import { AuthSession, AuthSessionCreate, AuthSessionCreateSchema, AuthSessionUpdate, AuthSessionUpdateSchema } from "@/service/entity"
 
-import { validator } from "@/service"
+import { validateServiceArgument } from "@/service/utils"
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
-import { checkArgument, query, toOrderByExpression } from "./utils"
+import { query, toOrderByExpression } from "./mysql-utils"
 
 const TABLE = 'AHA_AUTH_SESSION'
 
@@ -30,10 +30,10 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
 
     async create(authSessionCreate: AuthSessionCreate): Promise<AuthSession> {
 
-        checkArgument(validator, AuthSessionCreateSchema, authSessionCreate)
+        authSessionCreate = await validateServiceArgument(authSessionCreate, AuthSessionCreateSchema)
 
         const uid = uuidv4()
-        const now = new Date().getTime();
+        const now = new Date().getTime()
 
         const authSession: AuthSession = {
             uid: uid,
@@ -96,8 +96,8 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
     }
 
     async update(uid: string, authSessionUpdate: AuthSessionUpdate): Promise<AuthSession> {
-        
-        checkArgument(validator, AuthSessionUpdateSchema, authSessionUpdate)
+
+        authSessionUpdate = await validateServiceArgument(authSessionUpdate, AuthSessionUpdateSchema)
 
         const { lastAccessDatetime, invalid } = authSessionUpdate
         const columns: string[] = []
@@ -122,7 +122,7 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
 
     async page(pageable: AuthSessionPagable = {}): Promise<AuthSessionPage> {
 
-        checkArgument(validator, PageableSchema, pageable)
+        pageable = await validateServiceArgument(pageable, PageableSchema)
 
         const index = pageable.index && pageable.index >= 0 ? pageable.index : 0
         const size = pageable.pageSize && pageable.pageSize > 0 ? pageable.pageSize : NaN
@@ -166,7 +166,7 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
                 pageSize: size,
                 totalItems: totalItem,
                 totalPages: totalPage,
-                numItems: authSessions.length, 
+                numItems: authSessions.length,
                 content: authSessions
             }
         }

@@ -1,5 +1,5 @@
 import { MysqlAuthSessionDao } from '@/service/impl/MysqlAuthSessionDao'
-import { getConnection, query as mysqlQuery } from '@/service/impl/utils'
+import { getConnection, query as mysqlQuery } from '@/service/impl/mysql-utils'
 import fs from 'fs'
 import path from 'path'
 import mysql, { Pool, PoolConfig, PoolConnection } from 'mysql'

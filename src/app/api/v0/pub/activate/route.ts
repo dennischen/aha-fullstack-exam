@@ -1,11 +1,9 @@
-
-
+import { ApiContext } from "@/app/api/v0"
+import { ActivationForm, ActivationFormSchema, CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
+import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
-
-
-import { CommonResponse } from "@/app/api/v0/dto"
-import { NextRequest, NextResponse } from "next/server"
 
 /**
  * @swagger
@@ -43,11 +41,19 @@ import { NextRequest, NextResponse } from "next/server"
  *       - pub
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    const contentType = req.headers.get('Content-Type')
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await validateJson(req)
+        const activationForm: ActivationForm = await validateApiArgument(arg, ActivationFormSchema)
 
-    if (!contentType || contentType.indexOf('application/json') < 0) {
-        return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
-    }
+        /**
+         * 1. Check if the activation exists and is valid.
+         * 2. Set the user as activated and update the lastAccessDatetime.
+         * 3. Update activation status and invalidate all other validations for the same user.
+         * 4. Create a new authentication session.
+         * 5. Respond with the authentication details.
+         */
 
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }

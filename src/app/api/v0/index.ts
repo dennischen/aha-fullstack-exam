@@ -1,7 +1,3 @@
-import { Validator } from "jsonschema"
-
-import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFormSchema, SignupFormSchema, UpdatePasswordFormSchema, UpdateProfileFormSchema, UserInfoQuerySchema } from "./dto"
-
 
 export class ApiError extends Error {
 
@@ -18,13 +14,3 @@ export interface ApiContext {
 
     release(): void
 }
-
-export const validator = new Validator()
-validator.addSchema(OrderBySchema)
-validator.addSchema(ActivationFormSchema)
-validator.addSchema(AuthenticationFormSchema)
-validator.addSchema(SigninFormSchema)
-validator.addSchema(SignupFormSchema)
-validator.addSchema(UpdatePasswordFormSchema)
-validator.addSchema(UpdateProfileFormSchema)
-validator.addSchema(UserInfoQuerySchema)

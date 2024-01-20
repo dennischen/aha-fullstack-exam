@@ -1,11 +1,9 @@
-
-
+import { ApiContext } from "@/app/api/v0"
+import { CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
+import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
-
-
-import { CommonResponse } from "@/app/api/v0/dto"
-import { NextRequest, NextResponse } from "next/server"
 
 /**
  * @swagger
@@ -43,14 +41,19 @@ import { NextRequest, NextResponse } from "next/server"
  *       - pub
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    const contentType = req.headers.get('Content-Type')
+    return withApiContext(async (context: ApiContext) => {
+        const arg = await validateJson(req)
+        const signupForm: SigninForm = await validateApiArgument(arg, SigninFormSchema)
+
+        /**
+         * 1. Check if the user exists.
+         * 2. Compare the hashed password of the user with the hashed sign-in password.
+         * 3. Create a new authentication session.
+         * 4. Update lastAccessDatetime of the user
+         * 5. Respond with the authentication.
+         */
 
 
-    if (!contentType || contentType.indexOf('application/json') < 0) {
-        return Response.json({ message: `unsupported content type ${contentType}`, error: true } as CommonResponse, { status: 400 })
-    }
-
-
-
-    return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+    })
 }
