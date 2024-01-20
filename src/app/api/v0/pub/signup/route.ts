@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/CommonResponse'
+ *               $ref: '#/components/schemas/Authentication'
  *       400:
  *         description: 'Invalid arguments supplied.'
  *         content:

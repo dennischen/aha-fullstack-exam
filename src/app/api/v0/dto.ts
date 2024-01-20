@@ -327,18 +327,18 @@ export type UpdatePasswordForm = {
  *         totalActiveUserToday: 
  *           type: number
  *           description: 'Total number of users with active sessions today.'
- *         avgActiveUserIn7Day: 
+ *         avgActiveUserIn7Days: 
  *           type: number
  *           description: 'Average number of active session users in the last 7 days rolling.'
  *       required:
  *         - totalSignedUpUser
  *         - totalActiveUserToday
- *         - avgActiveUserIn7Day
+ *         - avgActiveUserIn7Days
  */
 export type UserStatistics = {
     totalSignedUpUser: string,
     totalActiveUserToday: string,
-    avgActiveUserIn7Day: number
+    avgActiveUserIn7Days: number
 }
 
 
