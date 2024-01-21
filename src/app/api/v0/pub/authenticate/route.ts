@@ -1,6 +1,6 @@
 import { ApiContext } from "@/app/api/v0"
 import { AuthenticationForm, AuthenticationFormSchema, CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
-import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -52,6 +52,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
          */
 
 
-        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
     })
 }

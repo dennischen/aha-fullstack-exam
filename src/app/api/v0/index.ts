@@ -1,3 +1,4 @@
+import { ActivationDao, AuthSessionDao, UserDao } from "@/service/dao"
 
 export class ApiError extends Error {
 
@@ -12,5 +13,19 @@ export class ApiError extends Error {
 }
 export interface ApiContext {
 
-    release(): void
+    getUserDao(): Promise<UserDao>
+
+    getAuthSessionDao(): Promise<AuthSessionDao>
+
+    getActivationDao(): Promise<ActivationDao>
+
+    hasTx(): boolean
+
+    beginTx(): Promise<void>
+
+    commit(): Promise<void>
+
+    rollback(): Promise<void>
+
+    release(): Promise<void>
 }

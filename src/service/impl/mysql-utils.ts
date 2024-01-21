@@ -13,6 +13,30 @@ export async function getConnection(pool: Pool) {
     })
 }
 
+export async function connect(connection: Connection): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        connection.connect((err: MysqlError) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    })
+}
+
+export async function end(connection: Connection): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        connection.end((err: MysqlError | undefined) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    })
+}
+
 export async function beginTransaction(connection: Connection): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         connection.beginTransaction((err: MysqlError) => {

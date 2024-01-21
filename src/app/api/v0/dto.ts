@@ -30,12 +30,15 @@ export type IdObject = {
  *         email: 
  *           type: string
  *           description: 'Email address, it is alos the account in the system.'
+ *           example: 'foo@bar.net'
  *         displayName: 
  *           type: string
  *           description: 'Name to display.'
+ *           example: 'Foo Bar'
  *         password: 
  *           type: string
  *           description: 'User password for signin.'
+ *           example: 'PaSsw0rD'
  *       required:
  *         - email
  *         - displayName

@@ -1435,6 +1435,11 @@
   resolved "https://registry.yarnpkg.com/@types/nprogress/-/nprogress-0.2.2.tgz#c73bf540ac7926fb1b6d03f9d2725e07b3848d65"
   integrity sha512-2wLrSJXLztGmr7wXwM0hA/wuIOY9DznVdd+ZFofHOiXcj9JnVt+2ZeLRJ7v5ZVlmheSkUOSg3Q3O4Ce7yji79A==
 
+"@types/password-hash@^1.2.24":
+  version "1.2.24"
+  resolved "https://registry.yarnpkg.com/@types/password-hash/-/password-hash-1.2.24.tgz#a3cb5544bdc575cc4368ff98ab9887326369a800"
+  integrity sha512-rdIR0oa8Pd2JP/KZ22UeLD6vrJWfZ2vgSKtWNCFpWtmUu5LR61+0yx051BN7IKpfxDI595jjhLcVBC3rZ2qfeQ==
+
 "@types/prismjs@^1.26.3":
   version "1.26.3"
   resolved "https://registry.yarnpkg.com/@types/prismjs/-/prismjs-1.26.3.tgz#47fe8e784c2dee24fe636cab82e090d3da9b7dec"
@@ -1511,6 +1516,11 @@
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.5.tgz#cb6e2a691b70cb177c6e3ae9c1d2e8b2ea8cd304"
   integrity sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==
+
+"@types/uid-generator@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@types/uid-generator/-/uid-generator-2.0.6.tgz#b217584affd7c66da4b6c322009aae4e09e8a7ab"
+  integrity sha512-n2rbpnhFPTseOIU6sJz7O8yOwkj8yJHIcW4GBre7UWURUAIWrVXL4EcdpxxWb7vmN5avVRu93tj/tYFsP3dQKg==
 
 "@types/unist@^2":
   version "2.0.10"
@@ -5429,6 +5439,11 @@ parse5@^7.0.0, parse5@^7.1.1:
   dependencies:
     entities "^4.4.0"
 
+password-hash@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/password-hash/-/password-hash-1.2.2.tgz#3b451f014de4b2e1ebfa0e5493b9517b1063af1d"
+  integrity sha512-Dy/5+Srojwv+1XnMrK2bn7f2jN3k2p90DfBVA0Zd6PrjWF7lXHOTWgKT4uBp1gIsqV7/llYqm+hj+gwDBF/Fmg==
+
 patch-package@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-8.0.0.tgz#d191e2f1b6e06a4624a0116bcb88edd6714ede61"
@@ -6784,6 +6799,11 @@ typescript@^5:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
+
+uid-generator@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/uid-generator/-/uid-generator-2.0.0.tgz#70e7b882300a4ccd12841e5a857dacada7fd7452"
+  integrity sha512-XLRw2UyViQueSbd3dOHkswrg4gA4YuhibKzkFiPkilo6cdKEQqOX3K/Yu6Z2WXVMK+npfMNlSSufVSUifbXoOQ==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"

@@ -5,6 +5,7 @@ import { validateServiceArgument } from "@/service/utils"
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
 import { query, toOrderByExpression } from "./mysql-utils"
+import { ServiceError } from "@/service"
 
 const TABLE = 'AHA_USER'
 
@@ -56,7 +57,7 @@ export class MysqlUserDao implements UserDao {
         const { results } = await query<User[]>(this.connection, `SELECT * FROM ${TABLE} WHERE uid = ?`, [uid])
 
         if (results.length <= 0) {
-            throw new Error(`User ${uid} not found`)
+            throw new ServiceError(`User ${uid} not found`, 404)
         }
 
         return wrapUserFromRowDataPacket(results[0])

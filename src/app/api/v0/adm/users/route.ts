@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
 
 import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, UserInfoQuery, UserInfoQuerySchema } from "@/app/api/v0/dto"
-import { validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 
@@ -60,6 +60,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 
 
-        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
     })
 }

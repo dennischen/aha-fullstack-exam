@@ -1,6 +1,6 @@
-import { ApiContext } from "@/app/api/v0"
+import { ApiContext, ApiError } from "@/app/api/v0"
 import { CommonResponse, SignupForm, SignupFormSchema } from "@/app/api/v0/dto"
-import { validateJson, validateApiArgument, withApiContext } from "@/app/api/v0/utils"
+import { validateJson, validateApiArgument, withApiContext, responseJson, hashPassword, generateVerficationToken, verifyPassword } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Authentication'
+ *               $ref: '#/components/schemas/CommonResponse'
  *       400:
  *         description: 'Invalid arguments supplied.'
  *         content:
@@ -54,6 +54,38 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 
 
-        return Response.json({ message: `Not implemented yet.`, error: true } as CommonResponse, { status: 500 })
+        const userDao = await context.getUserDao()
+        const activationDao = await context.getActivationDao()
+
+        const existedUser = await userDao.findByEmail(signupForm.email)
+        if (existedUser) {
+            throw new ApiError(`user ${signupForm.email} is already existed, use another email to signup`)
+        }
+
+        // TODO
+        // await validationPassword(signupForm.email)
+
+        const hashedPassword = await hashPassword(signupForm.password)
+
+        await context.beginTx()
+
+        const newUser = await userDao.create({
+            email: signupForm.email,
+            hashedPassword: hashedPassword,
+            displayName: signupForm.displayName,
+        })
+
+        const verificationToken = await generateVerficationToken()
+
+        const newActivation = await activationDao.create({
+            token: verificationToken,
+            userUid: newUser.uid
+        })
+
+        //TODO
+        //send verfication mail
+        //sendEamilActivation(newActivation)
+
+        return responseJson<CommonResponse>({ message: `User ${newUser.email} has been created, please check the email for the activation`})
     })
 }

@@ -5,6 +5,7 @@ import { validateServiceArgument } from "@/service/utils"
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
 import { query, toOrderByExpression } from "./mysql-utils"
+import { ServiceError } from "@/service"
 
 const TABLE = 'AHA_ACTIVATION'
 
@@ -49,7 +50,7 @@ export class MysqlActivationDao implements ActivationDao {
         const { results } = await query<Activation[]>(this.connection, `SELECT * FROM ${TABLE} WHERE uid = ?`, [uid])
 
         if (results.length <= 0) {
-            throw new Error(`Activation ${uid} not found`)
+            throw new ServiceError(`Activation ${uid} not found`, 404)
         }
 
         return wrapActivationFromRowDataPacket(results[0])

@@ -5,6 +5,7 @@ import { validateServiceArgument } from "@/service/utils"
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
 import { query, toOrderByExpression } from "./mysql-utils"
+import { ServiceError } from "@/service"
 
 const TABLE = 'AHA_AUTH_SESSION'
 
@@ -52,7 +53,7 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
         const { results } = await query<AuthSession[]>(this.connection, `SELECT * FROM ${TABLE} WHERE uid = ?`, [uid])
 
         if (results.length <= 0) {
-            throw new Error(`AuthSession ${uid} not found`)
+            throw new ServiceError(`AuthSession ${uid} not found`, 404)
         }
 
         return wrapAuthSessionFromRowDataPacket(results[0])

@@ -2,16 +2,18 @@ import { middlewareRequest } from '@nextspace/server/request'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+//by using process.env['static string'] build variable, the value is replace in build time, can't update dynamically
+const allowOrigin = process.env['WEB_CROS_ALLOW_ORIGIN']
+
+
+console.log(`Use ALLOW_ORIGIN: '${allowOrigin}' on API`)
+
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-
-    //by using process.env[''], the value is replace in compile time, can't update dynamically
-    const allowOrigin = process.env['CROS_ALLOW_ORIGIN']
 
     const response = NextResponse.next()
     if (allowOrigin) {
         //test by open dev console, type await (await fetch('http://127.0.0.1:3000/api/test?id=abcd')).json() 
-        //
         
         // add the CORS headers to the response
         response.headers.append('Access-Control-Allow-Credentials', "true")
