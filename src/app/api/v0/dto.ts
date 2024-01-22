@@ -37,8 +37,8 @@ export type IdObject = {
  *           example: 'Foo Bar'
  *         password: 
  *           type: string
- *           description: 'User password for signin.'
- *           example: 'PaSsw0rD'
+ *           description: 'User password for signin, is at least 8 characters long and includes at least one lowercase, one uppercase, one digit, and one special character.'
+ *           example: 'P@sSw0rD'
  *       required:
  *         - email
  *         - displayName
@@ -85,9 +85,11 @@ export type SignupForm = {
  *         email: 
  *           type: string
  *           description: 'Email address, the account of the system.'
+ *           example: 'foo@bar.net'
  *         password: 
  *           type: string
  *           description: 'User password.'
+ *           example: 'P@sSw0rD'
  *       required:
  *         - email
  *         - password
@@ -257,6 +259,7 @@ export type Profile = {
  *         displayName: 
  *           type: string
  *           description: "New display name for the user"
+ *           example: 'Qoo Bee'
  *       required:
  *         - displayName
  */

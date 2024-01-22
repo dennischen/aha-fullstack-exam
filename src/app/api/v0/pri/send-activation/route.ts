@@ -1,7 +1,7 @@
 
 import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, SignupForm, ActivationFormSchema, ActivationForm } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { responseJson, validateApiArgument, validateAuthToken, validateJson, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -32,6 +32,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  */
 export async function GET(req: NextRequest, res: NextResponse) {
     return withApiContext(async (context: ApiContext) => {
+        const authToken = await validateAuthToken(req)
         const arg = await validateJson(req)
 
         /**

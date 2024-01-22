@@ -1,6 +1,6 @@
 import { ApiContext } from "@/app/api/v0"
-import { ActivationForm, ActivationFormSchema, CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { ActivationForm, ActivationFormSchema, Authentication, CommonResponse } from "@/app/api/v0/dto"
+import { generateAuthSessionToken, responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -53,7 +53,35 @@ export async function POST(req: NextRequest, res: NextResponse) {
          * 5. Respond with the authentication details.
          */
 
+        const activationDao = await context.getActivationDao()
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        const activation = await activationDao.findByToken(activationForm.token)
+
+        if (!activation) {
+            return responseJson<CommonResponse>({ message: `No such activation '${activationForm.token}'`, error: true }, { status: 400 })
+        }
+        if (activation!.activatedDatetime) {
+            return responseJson<CommonResponse>({ message: `Can't activate '${activationForm.token}' again`, error: true }, { status: 400 })
+        }
+
+
+        const now = new Date().getTime()
+
+        //update activation
+        await context.beginTx()
+        activationDao.update(activation!.uid, { activatedDatetime: now })
+
+        const userDao = await context.getUserDao()
+        //update user
+        let user = await userDao.get(activation!.userUid)
+        user = await userDao.update(activation!.userUid, { activated: true, lastAccessDatetime: now, loginCount: (user.loginCount ?? 0) + 1 })
+
+        const authSessionDao = await context.getAuthSessionDao()
+        //create new auth session
+        const authSession = await authSessionDao.create({ token: await generateAuthSessionToken(), userUid: user.uid })
+
+        await context.commit()
+
+        return responseJson<Authentication>({ authToken: authSession.token, profile: { email: user.email, displayName: user.displayName, activated: user.activated } })
     })
 }

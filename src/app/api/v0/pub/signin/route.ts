@@ -1,6 +1,6 @@
 import { ApiContext } from "@/app/api/v0"
-import { CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { Authentication, CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
+import { generateAuthSessionToken, responseJson, validateApiArgument, validateJson, verifyPassword, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -43,7 +43,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
 export async function POST(req: NextRequest, res: NextResponse) {
     return withApiContext(async (context: ApiContext) => {
         const arg = await validateJson(req)
-        const signupForm: SigninForm = await validateApiArgument(arg, SigninFormSchema)
+        const signinForm: SigninForm = await validateApiArgument(arg, SigninFormSchema)
 
         /**
          * 1. Check if the user exists.
@@ -53,7 +53,34 @@ export async function POST(req: NextRequest, res: NextResponse) {
          * 5. Respond with the authentication.
          */
 
+        const userDao = await context.getUserDao()
+        let user = await userDao.findByEmail(signinForm.email)
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        if(!user){
+            return responseJson<CommonResponse>({ message: `Wrong email or password`, error: true }, { status: 401 })
+        }
+
+        if (!await verifyPassword(signinForm.password, user.hashedPassword)) {
+            return responseJson<CommonResponse>({ message: `Wrong email or password`, error: true }, { status: 401 })
+        }
+
+        if (user.disabled) {
+            return responseJson<CommonResponse>({ message: `User is disabled`, error: true }, { status: 403 })
+        }
+
+        const now = new Date().getTime()
+
+        await context.beginTx()
+
+        user = await userDao.update(user.uid, { lastAccessDatetime: now, loginCount: (user.loginCount ?? 0) + 1 })
+
+        const authSessionDao = await context.getAuthSessionDao()
+        //create new auth session
+        const authSession = await authSessionDao.create({ token: await generateAuthSessionToken(), userUid: user.uid })
+
+        await context.commit()
+
+        return responseJson<Authentication>({ authToken: authSession.token, profile: { email: user.email, displayName: user.displayName, activated: user.activated } })
+
     })
 }

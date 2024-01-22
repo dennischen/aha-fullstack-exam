@@ -1,6 +1,6 @@
 import { ApiContext, ApiError } from "@/app/api/v0"
 import { CommonResponse, SignupForm, SignupFormSchema } from "@/app/api/v0/dto"
-import { validateJson, validateApiArgument, withApiContext, responseJson, hashPassword, generateVerficationToken, verifyPassword } from "@/app/api/v0/utils"
+import { generateVerficationToken, hashPassword, responseJson, validateApiArgument, validateJson, validatePasswordRule, withApiContext } from "@/app/api/v0/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -52,18 +52,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
          * 5. Respond with an "OK" status.
          */
 
-
-
         const userDao = await context.getUserDao()
         const activationDao = await context.getActivationDao()
 
         const existedUser = await userDao.findByEmail(signupForm.email)
         if (existedUser) {
-            throw new ApiError(`user ${signupForm.email} is already existed, use another email to signup`)
+            throw new ApiError(`user '${signupForm.email}' is already existed, use another email to signup`)
         }
 
-        // TODO
-        // await validationPassword(signupForm.email)
+        await validatePasswordRule(signupForm.password)
 
         const hashedPassword = await hashPassword(signupForm.password)
 
@@ -82,10 +79,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
             userUid: newUser.uid
         })
 
+        await context.commit()
+
         //TODO
         //send verfication mail
         //sendEamilActivation(newActivation)
 
-        return responseJson<CommonResponse>({ message: `User ${newUser.email} has been created, please check the email for the activation`})
+        return responseJson<CommonResponse>({ message: `User '${newUser.email}' has been created, please check the email for the activation` })
     })
 }
