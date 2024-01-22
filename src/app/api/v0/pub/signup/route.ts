@@ -1,6 +1,7 @@
 import { ApiContext, ApiError } from "@/app/api/v0"
 import { CommonResponse, SignupForm, SignupFormSchema } from "@/app/api/v0/dto"
-import { generateVerficationToken, hashPassword, responseJson, validateApiArgument, validateJson, validatePasswordRule, withApiContext } from "@/app/api/v0/utils"
+import { generateActivationToken, hashPassword, responseJson, sendActivationEamil, validateApiArgument, validateJson, validatePasswordRule } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -40,7 +41,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *       - pub
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
         const arg = await validateJson(req)
         const signupForm: SignupForm = await validateApiArgument(arg, SignupFormSchema)
 
@@ -72,18 +73,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
             displayName: signupForm.displayName,
         })
 
-        const verificationToken = await generateVerficationToken()
+        const activationToken = await generateActivationToken()
 
         const newActivation = await activationDao.create({
-            token: verificationToken,
+            token: activationToken,
             userUid: newUser.uid
         })
 
-        await context.commit()
-
-        //TODO
-        //send verfication mail
-        //sendEamilActivation(newActivation)
+        await sendActivationEamil(newUser, newActivation)
 
         return responseJson<CommonResponse>({ message: `User '${newUser.email}' has been created, please check the email for the activation` })
     })

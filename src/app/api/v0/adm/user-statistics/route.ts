@@ -3,9 +3,12 @@
 
 
 import { ApiContext } from "@/app/api/v0"
-import { CommonResponse } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { CommonResponse, UserStatistics } from "@/app/api/v0/dto"
+import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
+
+import moment from "moment"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
 /**
@@ -39,8 +42,8 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *       - adm
  */
 export async function GET(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
-        const arg = await validateJson(req)
+    return withApiContext(async ({ context }) => {
+        const authToken = await validateAuthToken(req)
 
         /**
          * 1. Get the authToken from the header.
@@ -49,8 +52,50 @@ export async function GET(req: NextRequest, res: NextResponse) {
          * 4. Respond with the query result.
          */
 
+        const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
+
+        const authSession = await authSessionDao.findByToken(authToken)
+        await validateAuthSession(authSession)
+
+        let user = await userDao.get(authSession!.userUid)
+
+        if (!user.activated) {
+            return responseJson<CommonResponse>({ message: 'User is not activated yet', error: true }, { status: 403 })
+        }
+
+        await context.beginTx()
+
+        const now = new Date().getTime()
+
+        user = await userDao.update(user.uid, { lastAccessDatetime: now })
+
+        await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
 
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+
+        const totalSignedUpUser = await userDao.count()
+
+        //TODO Depends on whose timezone?
+        const momentNow = moment()
+        const momentStartToday = moment().startOf('date')
+
+        const startToday = new Date()
+        startToday.setUTCHours(0, 0, 0, 0)
+
+        const totalActiveUserToday = await authSessionDao.countActiveUserBetween(momentStartToday.valueOf(), momentNow.valueOf())
+
+        //TODO No data to track active user for every different user
+        //consider to enhance schema to track or just user GA
+        const avgActiveUserIn7Days = 0
+
+
+        const userStatistics: UserStatistics = {
+            totalSignedUpUser,
+            totalActiveUserToday,
+            avgActiveUserIn7Days,
+        }
+
+        return responseJson<UserStatistics>(userStatistics)
     })
 }

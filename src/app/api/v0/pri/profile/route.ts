@@ -1,7 +1,8 @@
 
 import { ApiContext } from "@/app/api/v0"
-import { CommonResponse, SignupForm, SignupFormSchema, UpdateProfileForm, UpdateProfileFormSchema } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateAuthToken, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { Profile, UpdateProfileForm, UpdateProfileFormSchema } from "@/app/api/v0/dto"
+import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -32,9 +33,8 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  */
 export async function GET(req: NextRequest, res: NextResponse) {
 
-    return withApiContext(async (context: ApiContext) => {
-        const arg = await validateJson(req)
-        const signupForm: SignupForm = await validateApiArgument(arg, SignupFormSchema)
+    return withApiContext(async ({ context }) => {
+        const authToken = await validateAuthToken(req)
 
         /**
          * 1. Get the authToken from the header.
@@ -43,7 +43,23 @@ export async function GET(req: NextRequest, res: NextResponse) {
          * 4. Respond with the profile.
          */
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
+
+        const authSession = await authSessionDao.findByToken(authToken)
+        await validateAuthSession(authSession)
+
+        let user = await userDao.get(authSession!.userUid)
+
+        await context.beginTx()
+
+        const now = new Date().getTime()
+
+        user = await userDao.update(user.uid, { lastAccessDatetime: now })
+
+        await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
+
+        return responseJson<Profile>({ email: user.email, displayName: user.displayName, activated: user.activated })
     })
 }
 
@@ -85,7 +101,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
  *       - pri
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
         const authToken = await validateAuthToken(req)
         const arg = await validateJson(req)
         const updateProfileForm: UpdateProfileForm = await validateApiArgument(arg, UpdateProfileFormSchema)
@@ -98,8 +114,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
          * 5. Respond with the updated profile.
          */
 
+        const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
 
+        const authSession = await authSessionDao.findByToken(authToken)
+        await validateAuthSession(authSession)
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        let user = await userDao.get(authSession!.userUid)
+
+        await context.beginTx()
+
+        const now = new Date().getTime()
+
+        user = await userDao.update(user.uid, { displayName: updateProfileForm.displayName, lastAccessDatetime: now })
+
+        await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
+
+        return responseJson<Profile>({ email: user.email, displayName: user.displayName, activated: user.activated })
     })
 }

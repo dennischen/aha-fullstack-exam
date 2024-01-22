@@ -1,7 +1,8 @@
 
 import { ApiContext } from "@/app/api/v0"
 import { CommonResponse } from "@/app/api/v0/dto"
-import { responseJson, validateAuthSession, validateAuthToken, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { responseJson, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -32,7 +33,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  */
 export async function GET(req: NextRequest, res: NextResponse) {
 
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
         const authToken = await validateAuthToken(req)
 
         /**
@@ -43,22 +44,19 @@ export async function GET(req: NextRequest, res: NextResponse) {
          */
 
         const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
 
-        const authSession = await authSessionDao.findByToken(authToken);
+        const authSession = await authSessionDao.findByToken(authToken)
         await validateAuthSession(authSession)
 
         await context.beginTx()
 
-        const now = new Date().getTime();
+        const now = new Date().getTime()
 
-        await authSessionDao.update(authSession!.uid, { invalid: true, lastAccessDatetime: now})
-        
-        const userDao = await context.getUserDao()
+        await authSessionDao.update(authSession!.uid, { invalid: true, lastAccessDatetime: now })
 
-        await userDao.update(authSession!.uid, {lastAccessDatetime: now})
+        await userDao.update(authSession!.userUid, { lastAccessDatetime: now })
 
-        await context.commit()
-
-        return responseJson<CommonResponse>({ message: 'User singed out, token was revoked'})
+        return responseJson<CommonResponse>({ message: 'User singed out, token was revoked' })
     })
 }

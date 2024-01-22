@@ -2,7 +2,8 @@
 
 import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, UpdatePasswordForm, UpdatePasswordFormSchema } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateAuthToken, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { hashPassword, responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson, validatePasswordRule, verifyPassword } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -46,7 +47,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *       - pri
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
         const authToken = await validateAuthToken(req)
         const arg = await validateJson(req)
         const updatePasswordForm: UpdatePasswordForm = await validateApiArgument(arg, UpdatePasswordFormSchema)
@@ -61,8 +62,38 @@ export async function POST(req: NextRequest, res: NextResponse) {
          * 7. Respond with an "OK" status.
          */
 
+        const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
+
+        const authSession = await authSessionDao.findByToken(authToken)
+        await validateAuthSession(authSession)
 
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        let user = await userDao.get(authSession!.userUid)
+
+        if (!user.activated) {
+            return responseJson<CommonResponse>({ message: 'User is not activated yet', error: true }, { status: 403 })
+        }
+
+        if (!await verifyPassword(updatePasswordForm.password, user.hashedPassword)) {
+            return responseJson<CommonResponse>({ message: `Wrong current password`, error: true }, { status: 403 })
+        }
+        if(updatePasswordForm.newPassword === updatePasswordForm.password){
+            return responseJson<CommonResponse>({ message: `New password is the same as current one`, error: true }, { status: 401 })
+        }
+
+        await validatePasswordRule(updatePasswordForm.newPassword)
+
+        const hashedPassword = await hashPassword(updatePasswordForm.newPassword)
+
+        await context.beginTx()
+
+        const now = new Date().getTime()
+
+        user = await userDao.update(user.uid, { hashedPassword, lastAccessDatetime: now })
+
+        await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
+
+        return responseJson<CommonResponse>({ message: `Password has been successfuly updated` })
     })
 }

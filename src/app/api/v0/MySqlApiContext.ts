@@ -30,7 +30,6 @@ export default class MySqlApiContext implements ApiContext {
             password: process.env.DB_MYSQL_PASSWORD ?? '',
             database: process.env.DB_MYSQL_DATABASE ?? '',
         }
-        console.log(">> MySqlApiContext init", this.config)
     }
 
     async getConnection(): Promise<Connection> {
@@ -38,7 +37,6 @@ export default class MySqlApiContext implements ApiContext {
             const connection = mysql.createConnection(this.config)
             await connect(connection)
             this.connection = connection
-            console.log(">>>> MySqlApiContext getConnection")
         }
         return this.connection!
     }
@@ -57,7 +55,6 @@ export default class MySqlApiContext implements ApiContext {
 
     async beginTx(): Promise<void> {
         if (!this._hasTx) {
-            console.log(">>>> MySqlApiContext beginTx")
             await beginTransaction(await this.getConnection())
             this._hasTx = true
         }
@@ -69,7 +66,6 @@ export default class MySqlApiContext implements ApiContext {
 
     async commit(): Promise<void> {
         if(this._hasTx){
-            console.log(">>>> MySqlApiContext commit")
             await commit(await this.getConnection())
             this._hasTx = undefined
         }
@@ -77,15 +73,12 @@ export default class MySqlApiContext implements ApiContext {
 
     async rollback(): Promise<void> {
         if(this._hasTx){
-            console.log(">>>> MySqlApiContext rollback")
             await rollback(await this.getConnection())
             this._hasTx = undefined
         }
     }
 
     async release(): Promise<void> {
-
-        console.log(">> MySqlApiContext release")
 
         if (this.connection) {
             if (this._hasTx) {

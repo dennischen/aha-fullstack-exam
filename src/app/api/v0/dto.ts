@@ -292,9 +292,11 @@ export type UpdateProfileForm = {
  *         password: 
  *           type: string
  *           description: 'Current user password.'
+ *           example: 'P@sSw0rD'
  *         newPassword: 
  *           type: string
  *           description: 'New user password.'
+ *           example: 'NeWP@sSw0rD'
  *       required:
  *         - password
  *         - newPassword
@@ -342,8 +344,8 @@ export type UpdatePasswordForm = {
  *         - avgActiveUserIn7Days
  */
 export type UserStatistics = {
-    totalSignedUpUser: string,
-    totalActiveUserToday: string,
+    totalSignedUpUser: number,
+    totalActiveUserToday: number,
     avgActiveUserIn7Days: number
 }
 

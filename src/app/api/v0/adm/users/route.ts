@@ -4,10 +4,15 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 
 import { ApiContext } from "@/app/api/v0"
-import { CommonResponse, UserInfoQuery, UserInfoQuerySchema } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { CommonResponse, UserInfo, UserInfoPage, UserInfoQuery, UserInfoQuerySchema } from "@/app/api/v0/dto"
+import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
+import { User } from "@/service/entity"
 import { NextRequest, NextResponse } from "next/server"
 
+
+
+const allowUserOrderBy = new Set(['emial', 'displayName', 'createdDatetime'])
 
 /**
  * @swagger
@@ -47,7 +52,8 @@ import { NextRequest, NextResponse } from "next/server"
  *       - adm
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
+        const authToken = await validateAuthToken(req)
         const arg = await validateJson(req)
         const userInfoQuery: UserInfoQuery = await validateApiArgument(arg, UserInfoQuerySchema)
 
@@ -59,7 +65,55 @@ export async function POST(req: NextRequest, res: NextResponse) {
          */
 
 
+        const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        const authSession = await authSessionDao.findByToken(authToken)
+        await validateAuthSession(authSession)
+
+        let user = await userDao.get(authSession!.userUid)
+
+        if (!user.activated) {
+            return responseJson<CommonResponse>({ message: 'User is not activated yet', error: true }, { status: 403 })
+        }
+
+        await context.beginTx()
+
+        const now = new Date().getTime()
+
+        user = await userDao.update(user.uid, { lastAccessDatetime: now })
+
+        await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
+
+        const orderByFiled = userInfoQuery.orderBy?.field
+        if (orderByFiled && !allowUserOrderBy.has(orderByFiled)) {
+            return responseJson<CommonResponse>({ message: `Don't allow to order by '${orderByFiled}'`, error: true }, { status: 400 })
+        }
+
+        const orderBy = orderByFiled ? {
+            field: orderByFiled as keyof User,
+            desc: userInfoQuery.orderBy?.desc
+        } : undefined
+
+        const page = await userDao.page({ index: userInfoQuery.index, pageSize: userInfoQuery.pageSize, orderBy: orderBy })
+
+        const userInfoPage: UserInfoPage = {
+            index: page.index,
+            totalItems: page.totalItems,
+            totalPages: page.totalPages,
+            numItems: page.numItems,
+            pageSize: page.pageSize,
+            content: page.content.map<UserInfo>((user) => {
+                return {
+                    email: user.email,
+                    displayName: user.displayName,
+                    loginCount: user.loginCount,
+                    signedupDatetime: user.createdDatetime,
+                    lastAccessDatetime: user.lastAccessDatetime
+                }
+            })
+        }
+
+        return responseJson<UserInfoPage>(userInfoPage)
     })
 }

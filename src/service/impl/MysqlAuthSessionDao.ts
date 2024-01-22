@@ -86,6 +86,14 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
         return results[0].count
     }
 
+    async countActiveUserBetween(start: number, end: number): Promise<number> {
+        const { results } = await query<{ count: number }[]>(this.connection, `SELECT count(distinct userUid) AS count FROM ${TABLE} WHERE lastAccessDateTime <= ? AND lastAccessDateTime >= ?`,
+            [Math.max(start, end), Math.min(start, end)])
+
+        return results[0].count
+    }
+
+
     async list(orderBy: AuthSessionOrderBy | AuthSessionOrderBy[] = { field: 'createdDatetime' }): Promise<AuthSession[]> {
         const orderByExpr = toOrderByExpression(orderBy)
         const { results } = await query<AuthSession[]>(this.connection, `SELECT * FROM ${TABLE}${orderByExpr ? ` ORDER BY ${orderByExpr}` : ''}`)

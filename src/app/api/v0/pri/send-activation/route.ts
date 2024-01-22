@@ -1,7 +1,8 @@
 
 import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, SignupForm, ActivationFormSchema, ActivationForm } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateAuthToken, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { generateActivationToken, responseJson, sendActivationEamil, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -31,20 +32,48 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *       - pri
  */
 export async function GET(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
         const authToken = await validateAuthToken(req)
-        const arg = await validateJson(req)
 
         /**
          * 1. Get the authToken from the header.
          * 2. Check if the authentication session exists and is still valid.
-         * 3. Check if the user is still invalid and invalidate expired validations for the same user.
+         * 3. Check if the user is still in-activated.
          * 4. Create a new activation and send an activation email to the user.
          * 6. Update the lastAccessDatetime of the authentication and user.
          * 7. Respond with an "OK" status.
          */
 
+        const authSessionDao = await context.getAuthSessionDao()
+        const userDao = await context.getUserDao()
+        const activationDao = await context.getActivationDao()
 
-        return responseJson<CommonResponse>({ message: `Not implemented yet.`, error: true }, { status: 500 })
+        const authSession = await authSessionDao.findByToken(authToken)
+        await validateAuthSession(authSession)
+
+        await context.beginTx()
+
+        const now = new Date().getTime()
+
+        await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
+
+
+        const user = await userDao.update(authSession!.userUid, { lastAccessDatetime: now })
+
+        if (user.activated) {
+            return responseJson<CommonResponse>({ message: 'User is activated, no need to re-activate' })
+        }
+
+        //TODO invalidate old activation
+
+        const activationToken = await generateActivationToken()
+        const newActivation = await activationDao.create({
+            token: activationToken,
+            userUid: user.uid
+        })
+
+        await sendActivationEamil(user, newActivation)
+
+        return responseJson<CommonResponse>({ message: `Please check the email '${user.email}' for the activation` })
     })
 }

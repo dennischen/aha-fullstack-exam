@@ -152,6 +152,8 @@ export interface AuthSessionDao {
 
     count(): Promise<number>
 
+    countActiveUserBetween(startDatetime:number, endDatetime: number): Promise<number> 
+
 }
 
 export type ActivationOrderBy = OrderBy<Activation>

@@ -1,6 +1,7 @@
 import { ApiContext } from "@/app/api/v0"
 import { ActivationForm, ActivationFormSchema, Authentication, CommonResponse } from "@/app/api/v0/dto"
-import { generateAuthSessionToken, responseJson, validateApiArgument, validateJson, withApiContext } from "@/app/api/v0/utils"
+import { generateAuthSessionToken, responseJson, validateApiArgument, validateJson } from "@/app/api/v0/utils"
+import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic' // defaults to force-static
@@ -41,7 +42,7 @@ export const dynamic = 'force-dynamic' // defaults to force-static
  *       - pub
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-    return withApiContext(async (context: ApiContext) => {
+    return withApiContext(async ({ context }) => {
         const arg = await validateJson(req)
         const activationForm: ActivationForm = await validateApiArgument(arg, ActivationFormSchema)
 
@@ -54,6 +55,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
          */
 
         const activationDao = await context.getActivationDao()
+        const userDao = await context.getUserDao()
+        const authSessionDao = await context.getAuthSessionDao()
 
         const activation = await activationDao.findByToken(activationForm.token)
 
@@ -64,23 +67,26 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return responseJson<CommonResponse>({ message: `Can't activate '${activationForm.token}' again`, error: true }, { status: 400 })
         }
 
+        let user = await userDao.get(activation!.userUid)
+        if (user.activated) {
+            //avoid to create auth session in old activation mail
+            return responseJson<CommonResponse>({ message: `User is already activated`, error: true }, { status: 400 })
+        }
+
+        await context.beginTx()
 
         const now = new Date().getTime()
 
         //update activation
-        await context.beginTx()
         activationDao.update(activation!.uid, { activatedDatetime: now })
 
-        const userDao = await context.getUserDao()
+        //TODO invalidate other activation for same user (if we allow multiple activation mail)
+
         //update user
-        let user = await userDao.get(activation!.userUid)
         user = await userDao.update(activation!.userUid, { activated: true, lastAccessDatetime: now, loginCount: (user.loginCount ?? 0) + 1 })
 
-        const authSessionDao = await context.getAuthSessionDao()
         //create new auth session
         const authSession = await authSessionDao.create({ token: await generateAuthSessionToken(), userUid: user.uid })
-
-        await context.commit()
 
         return responseJson<Authentication>({ authToken: authSession.token, profile: { email: user.email, displayName: user.displayName, activated: user.activated } })
     })
