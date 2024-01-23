@@ -1,7 +1,12 @@
 import { Schema } from "jsonschema"
 
+/**
+ * DTO object module, it is safe to be imported to client side - UI
+ */
 
-const displayNamePattern = /^(?!\s)(.*\S)$/g
+//test at https://regex101.com/
+export const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+=])[a-zA-Z\d!@#$%^&*()\-_+=]{8,}$/
+export const passwordPatternMsg = 'Ensure your password is at least 8 characters long and includes at least one lowercase, one uppercase, one digit, and one special character.'
 
 /**
  * @swagger
@@ -57,13 +62,12 @@ export const SignupFormSchema: Schema = {
         },
         displayName: {
             type: 'string',
-            pattern: displayNamePattern,
             minLength: 1,
             maxLength: 128
-            
         },
         password: {
-            type: 'string'
+            type: 'string',
+            minLength: 8
         }
     },
     required: ['email', 'displayName', 'password'],
@@ -270,7 +274,6 @@ export const UpdateProfileFormSchema: Schema = {
     properties: {
         displayName: {
             type: 'string',
-            pattern: displayNamePattern,
             minLength: 1,
             maxLength: 128
         }
@@ -310,7 +313,8 @@ export const UpdatePasswordFormSchema: Schema = {
             type: 'string'
         },
         newPassword: {
-            type: 'string'
+            type: 'string',
+            minLength: 8
         }
     },
     required: ['password', 'newPassword'],

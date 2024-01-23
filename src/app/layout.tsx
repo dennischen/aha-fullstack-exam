@@ -1,8 +1,7 @@
 /*
- * @file-created: 2023-10-23
  * @author: Dennis Chen
  */
-
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter'
 import { Inter } from 'next/font/google'
 import './global.scss'
 
@@ -15,7 +14,9 @@ export default function RootLayout({
 }) {
     return (
         <html>
-            <body className={inter.className}>{children}</body>
+            <body className={inter.className}>
+                <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+            </body>
         </html>
     )
 }

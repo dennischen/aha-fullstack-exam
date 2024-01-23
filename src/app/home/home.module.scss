@@ -42,6 +42,11 @@ $radius: 3px;
     align-items: center;
 }
 
+.mainPaper {
+    margin-top: $spacing;
+    padding: $spacing;
+}
+
 .flexpadding {
     flex-grow: 1;
     min-height: $spacing;

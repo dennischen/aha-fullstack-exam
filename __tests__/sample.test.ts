@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 
-import { DEFAULT_LANGUAGE } from '@/app/exam/constants'
+import { DEFAULT_LANGUAGE } from '@/app/home/constants'
 import { SampleService } from './SampleService'
 
 import { Schema, Validator } from 'jsonschema'

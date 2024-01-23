@@ -17,11 +17,11 @@ function clear(cy: Cypress.cy & CyEventEmitter) {
 
 // Cypress E2E Test
 describe('Home', () => {
-    it('should redirect exam page', () => {
+    it('should redirect home page', () => {
         // Start from the index page
         cy.visit('http://localhost:3000/')
 
-        cy.url().should('match', /\/exam$/)
+        cy.url().should('match', /\/home$/)
 
         
 

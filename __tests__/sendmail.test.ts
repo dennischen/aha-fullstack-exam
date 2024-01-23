@@ -1,8 +1,6 @@
 import '@testing-library/jest-dom'
 
-import { DEFAULT_LANGUAGE } from '@/app/exam/constants'
 import { sendActivationEamil } from '@/app/api/v0/utils'
-import { partial } from 'cypress/types/lodash'
 
 
 

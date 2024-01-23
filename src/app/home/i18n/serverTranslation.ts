@@ -2,7 +2,7 @@
 /*
  * https://nextjs.org/docs/app/building-your-application/routing/internationalization
  * nextjs officially use async server page and async dictionaries to provider server i18n
- * @file-created: 2023-11-22
+ * 
  * @author: Dennis Chen
  */
 

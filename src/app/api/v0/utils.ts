@@ -4,7 +4,7 @@ import { NextRequest } from "next/server"
 import PasswordHash from 'password-hash'
 import UIDGenerator from 'uid-generator'
 import { ApiError } from "."
-import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFormSchema, SignupFormSchema, UpdatePasswordFormSchema, UpdateProfileFormSchema, UserInfoQuerySchema } from "./dto"
+import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFormSchema, SignupFormSchema, UpdatePasswordFormSchema, UpdateProfileFormSchema, UserInfoQuerySchema, passwordPattern, passwordPatternMsg } from "./dto"
 import { sendMail } from "@/service/utils"
 import moment from "moment"
 
@@ -64,13 +64,9 @@ export async function validateAuthSession(authSession: AuthSession | undefined) 
     return authSession
 }
 
-
-//test at https://regex101.com/
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+=])[a-zA-Z\d!@#$%^&*()\-_+=]{8,}$/
-
 export async function validatePasswordRule(password: string) {
-    if (!passwordRegex.test(password)) {
-        throw new ApiError('Ensure your password is at least 8 characters long and includes at least one lowercase, one uppercase, one digit, and one special character.', 400)
+    if (!passwordPattern.test(password)) {
+        throw new ApiError(passwordPatternMsg, 400)
     }
     return password
 }
@@ -99,8 +95,8 @@ export function responseJson<T>(data: T, init?: ResponseInit) {
 export async function sendActivationEamil(user: User, activation: Activation) {
 
     const appName = process.env.APP_NAME
-    const appBaseUrl = process.env.APP_BASE_URL
-    const activationUrl = `${appBaseUrl}/exam/activate?token=${encodeURIComponent(activation.token)}`
+    const appBaseUrl = process.env.WEB_BASE_URL
+    const activationUrl = `${appBaseUrl}/home/activate?token=${encodeURIComponent(activation.token)}`
     const datetime = moment().format()
     const html =
         [`Dear ${user.displayName},`,

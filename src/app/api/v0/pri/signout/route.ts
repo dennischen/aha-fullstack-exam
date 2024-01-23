@@ -9,10 +9,10 @@ export const dynamic = 'force-dynamic' // defaults to force-static
 
 /**
  * @swagger
- * /api/v0/pri/singout:
+ * /api/v0/pri/signout:
  *   get:
- *     description: "Singout user session"
- *     operationId: pri#logout
+ *     description: "Signout user session"
+ *     operationId: pri#signout
  *     responses:
  *       200:
  *         description: "Successfully logged out."
@@ -47,6 +47,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
         const userDao = await context.getUserDao()
 
         const authSession = await authSessionDao.findByToken(authToken)
+
         await validateAuthSession(authSession)
 
         await context.beginTx()
@@ -57,6 +58,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         await userDao.update(authSession!.userUid, { lastAccessDatetime: now })
 
-        return responseJson<CommonResponse>({ message: 'User singed out, token was revoked' })
+        return responseJson<CommonResponse>({ message: 'User signed out, token was revoked' })
     })
 }

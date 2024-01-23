@@ -1,6 +1,6 @@
 'use client'
 /* a layout client component to prevent build loader resource into laout.js
- * @file-created: 2023-10-23
+ * 
  * @author: Dennis Chen
  */
 import WorkspaceBoundary from '@nextspace/WorkspaceBoundary'
@@ -8,7 +8,7 @@ import Modal from '@nextspace/components/Modal'
 import { WorkspaceConfig } from '@nextspace/types'
 import I18nextTranslationHolder from '@nextspace/utils/I18nextTranslationHolder'
 import { Suspense, useMemo } from 'react'
-import examStyles from "./exam.module.scss"
+import homeStyles from "./home.module.scss"
 
 import translationLoader from '@nextspace/components/translationLoader'
 import NProgressIndicator from '@nextspace/utils/NProgressIndicator'
@@ -55,7 +55,7 @@ export default function TheLayout({ defaultLanguage, envVariables, children }: T
         envVariables={envVariables} config={config} >
         <Layout>
             {children}
-            <div className={examStyles.flexpadding} />
+            <div className={homeStyles.flexpadding} />
         </Layout>
     </WorkspaceBoundary >
 
@@ -65,7 +65,7 @@ export default function TheLayout({ defaultLanguage, envVariables, children }: T
 function Layout({ children }: { children: React.ReactNode }) {
     const i18n = useI18n()
     return <Suspense fallback={<Modal>{i18n.l("loading")}...</Modal>}>
-        <div className={clsx(examStyles.layout)}>{children}</div>
+        <div className={clsx(homeStyles.layout)}>{children}</div>
     </Suspense >
 
 }

@@ -1,6 +1,6 @@
 /*
  * Server Component layout for getting information from cookie
- * @file-created: 2023-10-23
+ * 
  * @author: Dennis Chen
  */
 
@@ -13,7 +13,7 @@ import { getUserPreference } from './server-utils'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-    title: 'Aha Fullstack Exam',
+    title: process.env.APP_NAME,
     viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
 }
 
@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
         [key: string]: string | undefined
     } = {}
     for (var p in process.env) {
-        if (p.startsWith('EXAM_PUBLIC_')) {
+        if (p.startsWith('CLIENT_PUBLIC_')) {
             envVariables[p] = process.env[p]
         }
     }
