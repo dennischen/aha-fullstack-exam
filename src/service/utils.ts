@@ -33,6 +33,11 @@ export async function sendMail(mail: { to: string | string[], subject: string, h
 
     const { to, subject, html } = mail
 
+    if(process.env.DUMMY_MAILER){
+        console.log("---DummyMailer:", mail)
+        return;
+    }
+
     if (!mailTransporter) {
         mailTransporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',

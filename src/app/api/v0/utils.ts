@@ -5,6 +5,8 @@ import PasswordHash from 'password-hash'
 import UIDGenerator from 'uid-generator'
 import { ApiError } from "."
 import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFormSchema, SignupFormSchema, UpdatePasswordFormSchema, UpdateProfileFormSchema, UserInfoQuerySchema } from "./dto"
+import { sendMail } from "@/service/utils"
+import moment from "moment"
 
 const activationTokenGenerator = new UIDGenerator(256, UIDGenerator.BASE58)
 const authSessionTokenGenerator = new UIDGenerator(512, UIDGenerator.BASE58)
@@ -95,6 +97,26 @@ export function responseJson<T>(data: T, init?: ResponseInit) {
 
 
 export async function sendActivationEamil(user: User, activation: Activation) {
-    //TODO
-    console.log(">>Send email to ", user.email, activation.token)
+
+    const appName = process.env.APP_NAME
+    const appBaseUrl = process.env.APP_BASE_URL
+    const activationUrl = `${appBaseUrl}/exam/activate?token=${encodeURIComponent(activation.token)}`
+    const datetime = moment().format()
+    const html =
+        [`Dear ${user.displayName},`,
+        `Thank you for registering with ${appName}!`,
+            `To activate your account, please click on the following activation link:`,
+        `<a href='${activationUrl}'>${activationUrl}</a>`,
+        `If you didn't register for the ${appName} service, kindly ignore this email.`,
+            `Best regards,`,
+        `${appName} Team`,
+        `${datetime}`
+        ]
+    await sendMail({
+        to: user.email,
+        subject: `Activate Your Account for ${appName}`,
+        html: html.join('<br/>')
+    })
+    console.log(`Mail sent to ${user.displayName} ${user.email}`)
+
 }
