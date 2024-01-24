@@ -4,11 +4,14 @@
  * @author: Dennis Chen
  */
 
-import { Authentication, CommonResponse, Profile } from "@/app/api/v0/dto"
-import { setSessionStoreItem } from "@/app/home/client-utils"
+import { ActivationForm, Authentication, Profile } from "@/app/api/v0/dto"
+import { getErrorCommonHelp, setClientAuthentication } from "@/app/home/client-utils"
 import homeStyles from "@/app/home/home.module.scss"
-import { Button, FormHelperText, TextField } from '@mui/material'
+import { CommonHelp } from "@/app/home/types"
+import Button from '@mui/material/Button'
+import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import axios, { AxiosError } from "axios"
 import clsx from 'clsx'
@@ -16,7 +19,6 @@ import { Validator } from "jsonschema"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
-import Cookies from 'universal-cookie'
 
 const scheamValidator = new Validator()
 
@@ -32,7 +34,7 @@ export default function ThePage(props: ThePageProps) {
     const [activationToken, setActivationToken] = useState('')
     const [activationTokenHelp, setActivationTokenHelp] = useState('')
 
-    const [commonHelp, setCommonHelp] = useState('')
+    const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [activating, setActivating] = useState(false)
 
     const [authToken, setAuthToken] = useState('')
@@ -52,60 +54,53 @@ export default function ThePage(props: ThePageProps) {
             setActivationTokenHelp('')
         }
 
-        setCommonHelp('')
+        setCommonHelp(undefined)
 
         if (!invalid) {
             setActivating(true)
 
-            axios.post(`/api/v0/pub/activate`, { token: activationToken }).then((res) => {
+            const data: ActivationForm = { token: activationToken }
+
+            axios.post(`/api/v0/pub/activate`, data).then((res) => {
 
                 const auth: Authentication = res.data
 
                 setAuthToken(auth.authToken)
                 setProfile(auth.profile)
 
-                setSessionStoreItem('authToken', auth.authToken)
-                setSessionStoreItem('profile', auth.profile)
-
-                const cookies = new Cookies(null, { path: '/' })
-                cookies.set('authToken', auth.authToken)
+                setClientAuthentication(auth)
 
                 // show message to user, route later
                 setTimeout(() => {
+                    //has to use refresh to clean route cache (for invalidate token)
+                    router.refresh()
                     router.push('/home/dashboard')
                 }, 200)
             }).catch((err: AxiosError) => {
-                const res: CommonResponse = err.response?.data as any
-                if (res && res.message) {
-                    setCommonHelp(res.message)
-                } else if (err.message) {
-                    setCommonHelp(err.message)
-                } else {
-                    setCommonHelp('Unknow server error')
-                }
+                setCommonHelp(getErrorCommonHelp(err))
             }).finally(() => {
                 setActivating(false)
             })
 
         }
 
-    }, [activationToken])
+    }, [router, activationToken])
 
     useEffect(() => {
         const activationToken = searchParams?.get('token')
         if (activationToken) {
             setActivationToken(activationToken)
         }
-    }, [])
+    }, [searchParams])
 
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {authToken && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 600 }}>
+            {authToken && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
                 <Typography variant='h6'>{profile?.displayName}, You are now logged in</Typography>
                 <Link href='/home/dashboard'>Redirect to dashboard</Link>
             </div>}
-            {!authToken && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 600 }}
+            {!authToken && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickActivate()
@@ -130,8 +125,8 @@ export default function ThePage(props: ThePageProps) {
 
                 ></TextField>
 
-                {commonHelp && <FormHelperText error={true}>
-                    {commonHelp}
+                {commonHelp && <FormHelperText error={commonHelp.error}>
+                    {commonHelp.message}
                 </FormHelperText>}
 
 

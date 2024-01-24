@@ -52,3 +52,9 @@ $radius: 3px;
     min-height: $spacing;
     min-width: $spacing;
 }
+
+.accordionSummary {
+    &:global(.Mui-expanded) {
+        background-color: #0001;
+    }
+}

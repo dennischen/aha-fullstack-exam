@@ -4,16 +4,22 @@
  * @author: Dennis Chen
  */
 
-import { CommonResponse, SignupFormSchema, passwordPattern, passwordPatternMsg } from "@/app/api/v0/dto"
+import { CommonResponse, SignupForm, SignupFormSchema, passwordPattern, passwordPatternMsg } from "@/app/api/v0/dto"
+import { getErrorCommonHelp } from "@/app/home/client-utils"
+import VisibilityAdornment from "@/app/home/components/VisibilityInputAdornment"
 import homeStyles from "@/app/home/home.module.scss"
-import { Button, FormHelperText, TextField } from '@mui/material'
+import { CommonHelp } from "@/app/home/types"
+import Button from '@mui/material/Button'
+import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import axios, { AxiosError } from "axios"
 import clsx from 'clsx'
 import { Validator } from "jsonschema"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
-import axios, { AxiosError } from "axios"
 
 const scheamValidator = new Validator()
 
@@ -28,10 +34,12 @@ export default function ThePage({ }: ThePageProps) {
     const [displayNameHelp, setDisplayNameHelp] = useState('')
     const [password, setPassword] = useState('')
     const [passwordHelp, setPasswordHelp] = useState('')
+    const [passwordVisible, setPasswordVisible] = useState(false)
     const [passwordVerify, setPsswordVerify] = useState('')
     const [passwordVerifyHelp, setPasswordVerifyHelp] = useState('')
+    const [passwordVerifyVisible, setPasswordVerifyVisible] = useState(false)
 
-    const [commonHelp, setCommonHelp] = useState('')
+    const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [registering, setRegistering] = useState(false)
 
     const [signupCompleted, setSignupCompleted] = useState<CommonResponse>()
@@ -82,22 +90,21 @@ export default function ThePage({ }: ThePageProps) {
         }
 
 
-        setCommonHelp('')
+        setCommonHelp(undefined)
 
         if (!invalid) {
             setRegistering(true)
 
-            axios.post(`/api/v0/pub/signup`, { email, displayName, password }).then((res) => {
+            const data: SignupForm = {
+                email,
+                displayName,
+                password
+            }
+
+            axios.post(`/api/v0/pub/signup`, data).then((res) => {
                 setSignupCompleted(res.data as CommonResponse)
             }).catch((err: AxiosError) => {
-                const res: CommonResponse = err.response?.data as any
-                if (res && res.message) {
-                    setCommonHelp(res.message)
-                } else if (err.message) {
-                    setCommonHelp(err.message)
-                } else {
-                    setCommonHelp('Unknow server error')
-                }
+                setCommonHelp(getErrorCommonHelp(err))
             }).finally(() => {
                 setRegistering(false)
             })
@@ -108,7 +115,7 @@ export default function ThePage({ }: ThePageProps) {
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {signupCompleted && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 600 }}>
+            {signupCompleted && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
                 <Typography variant='h6' >Congratulations! You are Now Signed Up!</Typography>
                 <Typography >Please check your email for activation</Typography>
                 <FormHelperText>
@@ -120,8 +127,8 @@ export default function ThePage({ }: ThePageProps) {
                     }} disabled={registering}>Home</Button>
                 </div>
             </div>}
-            {!signupCompleted && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 600 }}
-                onSubmit={(evt)=>{
+            {!signupCompleted && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
+                onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickRegister()
                 }}>
@@ -142,7 +149,7 @@ export default function ThePage({ }: ThePageProps) {
                     error={!!emailHelp}
                     helperText={emailHelp}
                     disabled={registering}
-                    
+
                 ></TextField>
                 <TextField
                     required
@@ -168,7 +175,12 @@ export default function ThePage({ }: ThePageProps) {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    type="password"
+                    type={passwordVisible ? "text" : "password"}
+                    InputProps={{
+                        endAdornment: <VisibilityAdornment visible={passwordVisible}
+                            onClick={() => { setPasswordVisible(!passwordVisible) }}
+                        />
+                    }}
                     className={clsx(homeStyles.fullwidth)}
                     value={password}
                     onChange={(evt) => {
@@ -186,7 +198,12 @@ export default function ThePage({ }: ThePageProps) {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    type="password"
+                    type={passwordVerifyVisible ? "text" : "password"}
+                    InputProps={{
+                        endAdornment: <VisibilityAdornment visible={passwordVerifyVisible}
+                            onClick={() => { setPasswordVerifyVisible(!passwordVerifyVisible) }}
+                        />
+                    }}
                     className={clsx(homeStyles.fullwidth)}
                     value={passwordVerify}
                     onChange={(evt) => {
@@ -198,18 +215,18 @@ export default function ThePage({ }: ThePageProps) {
                     disabled={registering}
                 ></TextField>
 
-                {commonHelp && <FormHelperText error={true}>
-                    {commonHelp}
+                {commonHelp && <FormHelperText error={commonHelp.error}>
+                    {commonHelp.message}
                 </FormHelperText>}
 
 
-                <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'center', gap: 24 }}>
-                    <Button onClick={onClickRegister} disabled={registering} type="submit">Register</Button>
-                    <Button onClick={() => {
-                        router.push('/home')
-                    }} disabled={registering}>Home</Button>
+                <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                    <Button onClick={onClickRegister} variant="contained" disabled={registering} type="submit">Register</Button>
                 </div>
             </form>}
         </Paper>
+        <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'center', gap: 24 }}>
+            <Link href='/home'>Home</Link>
+        </div>
     </main>
 }

@@ -3,7 +3,6 @@
 
 export const dynamic = 'force-dynamic' // defaults to force-static
 
-import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, UserInfo, UserInfoPage, UserInfoQuery, UserInfoQuerySchema } from "@/app/api/v0/dto"
 import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
@@ -12,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 
 
-const allowUserOrderBy = new Set(['emial', 'displayName', 'createdDatetime'])
+const allowUserOrderBy = new Set(['email', 'displayName', 'signedupDatetime', 'lastAccessDatetime'])
 
 /**
  * @swagger
@@ -85,10 +84,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
 
-        const orderByFiled = userInfoQuery.orderBy?.field
+        let orderByFiled = userInfoQuery.orderBy?.field
         if (orderByFiled && !allowUserOrderBy.has(orderByFiled)) {
             return responseJson<CommonResponse>({ message: `Don't allow to order by '${orderByFiled}'`, error: true }, { status: 400 })
         }
+
+        //remap signedupDatetime to createDatetime
+        orderByFiled = [orderByFiled].map((name) => name === 'signedupDatetime' ? 'createdDatetime' : name).join()
+
+
 
         const orderBy = orderByFiled ? {
             field: orderByFiled as keyof User,

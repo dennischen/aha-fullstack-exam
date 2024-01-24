@@ -1,6 +1,5 @@
 
-import { ApiContext } from "@/app/api/v0"
-import { Profile, UpdateProfileForm, UpdateProfileFormSchema } from "@/app/api/v0/dto"
+import { CommonResponse, Profile, UpdateProfileForm, UpdateProfileFormSchema } from "@/app/api/v0/dto"
 import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
@@ -121,6 +120,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         await validateAuthSession(authSession)
 
         let user = await userDao.get(authSession!.userUid)
+
+        if (!user.activated) {
+            return responseJson<CommonResponse>({ message: 'User is not activated yet', error: true }, { status: 403 })
+        }
 
         await context.beginTx()
 

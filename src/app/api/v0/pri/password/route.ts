@@ -1,6 +1,5 @@
 
 
-import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, UpdatePasswordForm, UpdatePasswordFormSchema } from "@/app/api/v0/dto"
 import { hashPassword, responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson, validatePasswordRule, verifyPassword } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
@@ -79,7 +78,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return responseJson<CommonResponse>({ message: `Wrong current password`, error: true }, { status: 403 })
         }
         if(updatePasswordForm.newPassword === updatePasswordForm.password){
-            return responseJson<CommonResponse>({ message: `New password is the same as current one`, error: true }, { status: 401 })
+            return responseJson<CommonResponse>({ message: `New password is the same as current one`, error: true }, { status: 400 })
         }
 
         await validatePasswordRule(updatePasswordForm.newPassword)
