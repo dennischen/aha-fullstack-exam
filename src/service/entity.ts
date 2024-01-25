@@ -1,4 +1,8 @@
-import { Schema, Validator } from "jsonschema"
+/*
+ * @author: Dennis Chen
+ */
+
+import type { Schema } from "jsonschema"
 
 export type User = {
     uid: string

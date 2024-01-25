@@ -1,12 +1,17 @@
+
+/*
+ * @author: Dennis Chen
+ */
+
 import { Activation, AuthSession, User } from "@/service/entity"
+import { sendMail } from "@/service/utils"
 import { Schema, Validator } from "jsonschema"
+import moment from "moment"
 import { NextRequest } from "next/server"
 import PasswordHash from 'password-hash'
 import UIDGenerator from 'uid-generator'
 import { ApiError } from "."
 import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFormSchema, SignupFormSchema, UpdatePasswordFormSchema, UpdateProfileFormSchema, UserInfoQuerySchema, passwordPattern, passwordPatternMsg } from "./dto"
-import { sendMail } from "@/service/utils"
-import moment from "moment"
 
 const activationTokenGenerator = new UIDGenerator(256, UIDGenerator.BASE58)
 const authSessionTokenGenerator = new UIDGenerator(512, UIDGenerator.BASE58)

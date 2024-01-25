@@ -1,12 +1,14 @@
 
+/*
+ * @author: Dennis Chen
+ */
 
 import { CommonResponse, UpdatePasswordForm, UpdatePasswordFormSchema } from "@/app/api/v0/dto"
 import { hashPassword, responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson, validatePasswordRule, verifyPassword } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
-export const dynamic = 'force-dynamic' // defaults to force-static
-
+export const dynamic = 'force-dynamic' // always use dyanmic
 
 /**
  * @swagger

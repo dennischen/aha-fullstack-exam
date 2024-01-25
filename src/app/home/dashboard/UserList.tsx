@@ -75,7 +75,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         }).finally(() => {
             setQuerying(false)
         })
-    }, [])
+    }, [authToken, onUnauthenticated])
 
     const onPage = (page: number) => {
         queryUserInfo({ ...userInfoQuery, ...{ index: page } })
@@ -91,7 +91,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         if (expanded) {
             queryUserInfo(userInfoQuery)
         }
-    }, [expanded])
+    }, [expanded, queryUserInfo, userInfoQuery])
 
     const orderBy = userInfoQuery.orderBy!
 
@@ -99,7 +99,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         <AccordionSummary
             className={homeStyles.accordionSummary}
             expandIcon={<ArrowDropDownIcon />}>
-            <div className={homeStyles.hlayout} style={{gap: 8}}>
+            <div className={homeStyles.hlayout} style={{ gap: 8 }}>
                 <Typography>User List</Typography>
                 {querying && <CircularProgress size={20} />}
             </div>

@@ -1,7 +1,7 @@
 
 
 
-export const dynamic = 'force-dynamic' // defaults to force-static
+export const dynamic = 'force-dynamic' // always use dyanmic
 
 
 import { NextRequest, NextResponse } from "next/server"

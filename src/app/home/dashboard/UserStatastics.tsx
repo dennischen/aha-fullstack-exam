@@ -14,13 +14,13 @@ import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 import FormHelperText from '@mui/material/FormHelperText'
 import Skeleton from '@mui/material/Skeleton'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
 
 type Props = {
     authToken: string,
@@ -56,13 +56,13 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
         }).finally(() => {
             setQuerying(false)
         })
-    }, [])
+    }, [authToken, onUnauthenticated])
 
     useEffect(() => {
         if (expanded) {
             queryUserStatastics()
         }
-    }, [expanded])
+    }, [expanded, queryUserStatastics])
 
 
     return <Accordion expanded={expanded} onChange={(evt, expanded) => { onExpand(expanded) }}>

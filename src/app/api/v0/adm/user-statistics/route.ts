@@ -1,16 +1,16 @@
 
+/*
+ * @author: Dennis Chen
+ */
 
-
-
-import { ApiContext } from "@/app/api/v0"
 import { CommonResponse, UserStatistics } from "@/app/api/v0/dto"
-import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+import { responseJson, validateAuthSession, validateAuthToken } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
 import moment from "moment"
 
-export const dynamic = 'force-dynamic' // defaults to force-static
+export const dynamic = 'force-dynamic' // always use dyanmic
 /**
  * @swagger
  * /api/v0/adm/user-statistics:

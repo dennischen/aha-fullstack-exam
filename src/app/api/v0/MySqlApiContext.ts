@@ -1,11 +1,15 @@
+
+/*
+ * @author: Dennis Chen
+ */
+
 import { ActivationDao, AuthSessionDao, UserDao } from "@/service/dao"
-import { ApiContext } from "."
-import { Connection } from "mysql"
-import mysql, { Pool, PoolConfig, PoolConnection } from 'mysql'
-import { MysqlUserDao } from "@/service/impl/MysqlUserDao"
-import { MysqlAuthSessionDao } from "@/service/impl/MysqlAuthSessionDao"
 import { MysqlActivationDao } from "@/service/impl/MysqlActivationDao"
+import { MysqlAuthSessionDao } from "@/service/impl/MysqlAuthSessionDao"
+import { MysqlUserDao } from "@/service/impl/MysqlUserDao"
 import { beginTransaction, commit, connect, end, rollback } from "@/service/impl/mysql-utils"
+import mysql, { Connection } from 'mysql'
+import { ApiContext } from "."
 
 export type MySqlConfig = {
     host: string
@@ -18,7 +22,7 @@ export default class MySqlApiContext implements ApiContext {
 
     private config: MySqlConfig
 
-    //TODO use pool
+    //TODO use connection pool
     private connection: Connection | undefined
 
     private _hasTx: boolean | undefined
@@ -65,14 +69,14 @@ export default class MySqlApiContext implements ApiContext {
     }
 
     async commit(): Promise<void> {
-        if(this._hasTx){
+        if (this._hasTx) {
             await commit(await this.getConnection())
             this._hasTx = undefined
         }
     }
 
     async rollback(): Promise<void> {
-        if(this._hasTx){
+        if (this._hasTx) {
             await rollback(await this.getConnection())
             this._hasTx = undefined
         }

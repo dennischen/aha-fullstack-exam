@@ -1,4 +1,7 @@
 
+/*
+ * @author: Dennis Chen
+ */
 
 export class ServiceError extends Error {
     readonly code: number | undefined

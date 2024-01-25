@@ -1,3 +1,7 @@
+/*
+ * @author: Dennis Chen
+ */
+
 import { ActivationDao, ActivationOrderBy, ActivationPagable, ActivationPage, PageableSchema } from "@/service/dao"
 import { Activation, ActivationCreate, ActivationCreateSchema, ActivationUpdate, ActivationUpdateSchema } from "@/service/entity"
 

@@ -1,3 +1,7 @@
+/*
+ * @author: Dennis Chen
+ */
+
 import { AuthSessionDao, AuthSessionOrderBy, AuthSessionPagable, AuthSessionPage, PageableSchema } from "@/service/dao"
 import { AuthSession, AuthSessionCreate, AuthSessionCreateSchema, AuthSessionUpdate, AuthSessionUpdateSchema } from "@/service/entity"
 

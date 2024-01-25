@@ -1,3 +1,8 @@
+
+/*
+ * @author: Dennis Chen
+ */
+
 import { Entity, OrderBy } from '@/service/dao'
 import { Connection, FieldInfo, MysqlError, Pool, PoolConnection, QueryOptions } from 'mysql'
 

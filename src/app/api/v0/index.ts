@@ -1,3 +1,8 @@
+
+/*
+ * @author: Dennis Chen
+ */
+
 import { ActivationDao, AuthSessionDao, UserDao } from "@/service/dao"
 
 export class ApiError extends Error {

@@ -1,10 +1,14 @@
 
+/*
+ * @author: Dennis Chen
+ */
+
+import { Authentication, Profile } from '@/app/api/v0/dto'
 import acceptLanguageParser from 'accept-language-parser'
+import axios from 'axios'
 import { cookies, headers } from 'next/headers'
 import 'server-only'
 import { COOKIE_LANGUAGE, DEFAULT_LANGUAGE, } from './constants'
-import { Authentication, Profile } from '../api/v0/dto'
-import axios from 'axios'
 
 export function getUserPreference() {
 
@@ -23,7 +27,7 @@ export function getUserPreference() {
 
 export function findAuthTokenInCookie(): string | undefined {
     return cookies().get('authToken')?.value
-    
+
 }
 
 export async function findAuthenticationInCookie(): Promise<Authentication | undefined> {

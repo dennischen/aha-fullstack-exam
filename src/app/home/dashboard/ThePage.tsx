@@ -8,6 +8,7 @@
 import { Profile } from '@/app/api/v0/dto'
 import { cleanClientAuthentication, getCookieAuthToken, getErrorCommonHelp, getSessionStoreObject, setClientAuthentication, setSessionStoreItem } from '@/app/home/client-utils'
 import homeStyles from '@/app/home/home.module.scss'
+import { CommonHelp } from "@/app/home/types"
 import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
@@ -16,7 +17,6 @@ import axios, { AxiosError } from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { CommonHelp } from "@/app/home/types"
 
 import clsx from 'clsx'
 import MyPassword from './MyPassword'

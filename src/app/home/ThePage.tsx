@@ -5,12 +5,12 @@
  * @author: Dennis Chen
  */
 
-import homeStyles from "./home.module.scss"
-import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { useI18n, useWorkspace } from "@nextspace"
 import clsx from "clsx"
+import Image from "next/image"
 import Link from 'next/link'
+import homeStyles from "./home.module.scss"
 
 export type ThePageProps = {}
 
@@ -19,14 +19,12 @@ export default function ThePage({ }: ThePageProps) {
     const { l, language } = useI18n()
 
     return <main className={homeStyles.main}>
-        <Paper elevation={1} className={homeStyles.mainPaper}>
-            <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
-                <Typography variant='h6' >Welcome to {l('appName')}</Typography>
-                <div style={{ height: 100 }}>
-
-                </div>
+        <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            <Typography variant='h6' >Welcome to {l('appName')}</Typography>
+            <div style={{ height: 180 }}>
+                <Image src='/vercel.svg' alt='' width={394} height={180}/>
             </div>
-        </Paper>
+        </div>
         <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'center', gap: 48 }}>
             <Link href={'/home/signup'} >Signup</Link>
             <Link href={'/home/signin'} >Signin</Link>

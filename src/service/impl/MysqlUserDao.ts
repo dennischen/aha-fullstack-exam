@@ -1,3 +1,7 @@
+/*
+ * @author: Dennis Chen
+ */
+
 import { PageableSchema, UserDao, UserOrderBy, UserPagable, UserPage } from "@/service/dao"
 import { User, UserCreate, UserCreateSchema, UserUpdate, UserUpdateSchema } from "@/service/entity"
 import { validateServiceArgument } from "@/service/utils"

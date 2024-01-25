@@ -1,3 +1,7 @@
+/*
+ * @author: Dennis Chen
+ */
+
 import { Authentication, CommonResponse } from "@/app/api/v0/dto"
 import Cookies from "universal-cookie"
 import { CommonHelp } from "./types"

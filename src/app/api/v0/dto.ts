@@ -1,4 +1,9 @@
-import { Schema } from "jsonschema"
+
+/*
+ * @author: Dennis Chen
+ */
+
+import type { Schema } from "jsonschema"
 
 /**
  * DTO object module, it is safe to be imported to client side - UI

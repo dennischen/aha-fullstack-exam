@@ -1,10 +1,13 @@
-import { ApiContext, ApiError } from "@/app/api/v0"
+/*
+ * @author: Dennis Chen
+ */
+
 import { CommonResponse, SignupForm, SignupFormSchema } from "@/app/api/v0/dto"
 import { generateActivationToken, hashPassword, responseJson, sendActivationEamil, validateApiArgument, validateJson, validatePasswordRule } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
-export const dynamic = 'force-dynamic' // defaults to force-static
+export const dynamic = 'force-dynamic' // always use dyanmic
 /**
  * @swagger
  * /api/v0/pub/signup:
@@ -58,7 +61,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         const existedUser = await userDao.findByEmail(signupForm.email)
         if (existedUser) {
-            throw new ApiError(`user '${signupForm.email}' is already existed, use another email to signup`)
+            return responseJson<CommonResponse>({ message: `user '${signupForm.email}' is already existed, use another email to signup`, error: true }, { status: 400 })
         }
 
         await validatePasswordRule(signupForm.password)

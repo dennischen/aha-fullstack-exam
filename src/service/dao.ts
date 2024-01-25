@@ -1,5 +1,9 @@
-import { Schema } from "jsonschema"
-import { AuthSession, AuthSessionCreate, AuthSessionUpdate, Activation, ActivationCreate, ActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
+/*
+ * @author: Dennis Chen
+ */
+
+import type { Schema } from "jsonschema"
+import type { AuthSession, AuthSessionCreate, AuthSessionUpdate, Activation, ActivationCreate, ActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
 
 export type Entity = Record<string, any>
 

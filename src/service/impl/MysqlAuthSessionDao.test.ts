@@ -1,3 +1,7 @@
+/*
+ * @author: Dennis Chen
+ */
+
 import { MysqlAuthSessionDao } from '@/service/impl/MysqlAuthSessionDao'
 import { getConnection, query as mysqlQuery } from '@/service/impl/mysql-utils'
 import fs from 'fs'
@@ -12,10 +16,10 @@ const database = process.env.JEST_MYSQL_DATABASE
 
 
 
-if (!host || !user || !password || !database) {
+if (!host || !user || !database) {
     describe('No Db Config', () => {
         it('will ignore this test because of lack of database config', () => {
-            console.log(host, user, password, database)
+            console.log(host, user, database)
         })
     })
 } else {

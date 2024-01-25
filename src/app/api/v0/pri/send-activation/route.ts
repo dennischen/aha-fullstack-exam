@@ -1,11 +1,14 @@
 
-import { ApiContext } from "@/app/api/v0"
-import { CommonResponse, SignupForm, ActivationFormSchema, ActivationForm } from "@/app/api/v0/dto"
-import { generateActivationToken, responseJson, sendActivationEamil, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
+/*
+ * @author: Dennis Chen
+ */
+
+import { CommonResponse } from "@/app/api/v0/dto"
+import { generateActivationToken, responseJson, sendActivationEamil, validateAuthSession, validateAuthToken } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
-export const dynamic = 'force-dynamic' // defaults to force-static
+export const dynamic = 'force-dynamic' // always use dyanmic
 
 /**
  * @swagger

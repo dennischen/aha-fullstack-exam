@@ -1,7 +1,7 @@
 
-
-
-export const dynamic = 'force-dynamic' // defaults to force-static
+/*
+ * @author: Dennis Chen
+ */
 
 import { CommonResponse, UserInfo, UserInfoPage, UserInfoQuery, UserInfoQuerySchema } from "@/app/api/v0/dto"
 import { responseJson, validateApiArgument, validateAuthSession, validateAuthToken, validateJson } from "@/app/api/v0/utils"
@@ -9,7 +9,7 @@ import withApiContext from "@/app/api/v0/withApiContext"
 import { User } from "@/service/entity"
 import { NextRequest, NextResponse } from "next/server"
 
-
+export const dynamic = 'force-dynamic' // always use dyanmic
 
 const allowUserOrderBy = new Set(['email', 'displayName', 'signedupDatetime', 'lastAccessDatetime'])
 

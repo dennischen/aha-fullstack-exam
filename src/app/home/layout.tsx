@@ -1,3 +1,8 @@
+
+/*
+ * @author: Dennis Chen
+ */
+
 /*
  * Server Component layout for getting information from cookie
  * 
@@ -10,7 +15,7 @@ import TheLayout from "./TheLayout"
 import { getUserPreference } from './server-utils'
 
 //force no-static page (use cookies() did the same thing in nextjs)
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic' // always use dyanmic
 
 export const metadata: Metadata = {
     title: process.env.APP_NAME,

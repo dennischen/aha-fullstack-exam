@@ -1,10 +1,13 @@
-import { ApiContext } from "@/app/api/v0"
+/*
+ * @author: Dennis Chen
+ */
+
 import { Authentication, CommonResponse, SigninForm, SigninFormSchema } from "@/app/api/v0/dto"
 import { generateAuthSessionToken, responseJson, validateApiArgument, validateJson, verifyPassword } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
 
-export const dynamic = 'force-dynamic' // defaults to force-static
+export const dynamic = 'force-dynamic' // always use dyanmic
 
 /**
  * @swagger

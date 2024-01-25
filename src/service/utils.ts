@@ -1,3 +1,7 @@
+/*
+ * @author: Dennis Chen
+ */
+
 import { Schema, Validator } from "jsonschema"
 import { ServiceError } from "."
 import { OrderBySchema, PageableSchema } from "./dao"

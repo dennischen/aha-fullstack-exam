@@ -1,6 +1,7 @@
 'use client'
-/* a layout client component to prevent build loader resource into laout.js
- * 
+/* 
+ * a layout client component to prevent build loader resource into laout.js
+
  * @author: Dennis Chen
  */
 import WorkspaceBoundary from '@nextspace/WorkspaceBoundary'

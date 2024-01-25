@@ -1,3 +1,8 @@
+
+/*
+ * @author: Dennis Chen
+ */
+
 import { withSwagger } from 'next-swagger-doc'
 import { Options, OAS3Definition } from 'swagger-jsdoc'
 
