@@ -48,7 +48,7 @@ export type IdObject = {
  *         password: 
  *           type: string
  *           description: 'User password for signin, is at least 8 characters long and includes at least one lowercase, one uppercase, one digit, and one special character.'
- *           example: 'P@sSw0rD'
+ *           example: 'P@ssw0rd'
  *       required:
  *         - email
  *         - displayName
@@ -98,7 +98,7 @@ export type SignupForm = {
  *         password: 
  *           type: string
  *           description: 'User password.'
- *           example: 'P@sSw0rD'
+ *           example: 'P@ssw0rd'
  *       required:
  *         - email
  *         - password
@@ -300,11 +300,11 @@ export type UpdateProfileForm = {
  *         password: 
  *           type: string
  *           description: 'Current user password.'
- *           example: 'P@sSw0rD'
+ *           example: 'P@ssw0rd'
  *         newPassword: 
  *           type: string
  *           description: 'New user password.'
- *           example: 'NeWP@sSw0rD'
+ *           example: 'NeWP@ssw0rd'
  *       required:
  *         - password
  *         - newPassword
@@ -443,9 +443,11 @@ export type OrderBy = {
  *         index: 
  *           type: number
  *           description: 'The page index, zero-based'
+ *           example: 0
  *         pageSize: 
  *           type: number
  *           description: 'The item size per page.'
+ *           example: 10
  *         orderBy:
  *           $ref : '#/components/schemas/OrderBy'
  *       required:

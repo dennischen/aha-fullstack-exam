@@ -31,7 +31,6 @@ export function findAuthTokenInCookie(): string | undefined {
 }
 
 export async function findAuthenticationInCookie(): Promise<Authentication | undefined> {
-    const theCookies = cookies()
     const authToken = findAuthTokenInCookie()
     let profile: Profile | undefined
     if (authToken) {
@@ -46,6 +45,8 @@ export async function findAuthenticationInCookie(): Promise<Authentication | und
                 authToken: authToken,
                 profile: profile!
             }
-        } catch (err) { }
+        } catch (err) {
+            console.error('Error when get profile in server', err)
+        }
     }
 }

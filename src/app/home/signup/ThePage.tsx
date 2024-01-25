@@ -136,7 +136,7 @@ export default function ThePage({ }: ThePageProps) {
                 <TextField
                     required
                     label="Email"
-                    placeholder='foo@bar.com'
+                    placeholder='foo@bar.net'
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -171,7 +171,7 @@ export default function ThePage({ }: ThePageProps) {
                 <TextField
                     required
                     label="Password"
-                    placeholder='P@sSw0rD'
+                    placeholder='P@ssw0rd'
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -194,7 +194,7 @@ export default function ThePage({ }: ThePageProps) {
                 <TextField
                     required
                     label="Password Verfication"
-                    placeholder='P@sSw0rD'
+                    placeholder='P@ssw0rd'
                     InputLabelProps={{
                         shrink: true,
                     }}

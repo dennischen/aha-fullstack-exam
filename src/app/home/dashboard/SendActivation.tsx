@@ -51,7 +51,7 @@ export default function SendActivation({ authToken, profile, onUnauthenticated }
 
     return <div className={homeStyles.vlayout}>
         <Typography>The account associated with {profile.displayName} has not been activated yet. Kindly activate it first by clicking the button below to resend the activation email.</Typography>
-        <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32 }}
+        <form className={clsx(homeStyles.vlayout, homeStyles.fullwidth)} style={{ padding: 16, justifyContent: 'center', gap: 32}}
             onSubmit={(evt) => {
                 evt.preventDefault()
                 onClickSend()

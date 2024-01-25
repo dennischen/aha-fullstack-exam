@@ -6,7 +6,9 @@
 
 import { Authentication, Profile, SigninForm } from "@/app/api/v0/dto"
 import { getErrorCommonHelp, setClientAuthentication } from "@/app/home/client-utils"
+import VisibilityAdornment from "@/app/home/components/VisibilityInputAdornment"
 import homeStyles from "@/app/home/home.module.scss"
+import { CommonHelp } from "@/app/home/types"
 import Button from '@mui/material/Button'
 import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
@@ -18,7 +20,6 @@ import { Validator } from "jsonschema"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
-import { CommonHelp } from "@/app/home/types"
 
 const scheamValidator = new Validator()
 
@@ -36,6 +37,7 @@ export default function ThePage(props: ThePageProps) {
     const [emailHelp, setEmailHelp] = useState('')
     const [password, setPassword] = useState('')
     const [passwordHelp, setPasswordHelp] = useState('')
+    const [passwordVisible, setPasswordVisible] = useState(false)
 
     const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [signing, setSigning] = useState(false)
@@ -117,7 +119,7 @@ export default function ThePage(props: ThePageProps) {
                 <TextField
                     required
                     label="Email"
-                    placeholder='foo@bar.com'
+                    placeholder='foo@bar.net'
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -135,11 +137,16 @@ export default function ThePage(props: ThePageProps) {
                 <TextField
                     required
                     label="Password"
-                    placeholder='P@sSw0rD'
+                    placeholder='P@ssw0rd'
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    type="password"
+                    type={passwordVisible ? "text" : "password"}
+                    InputProps={{
+                        endAdornment: <VisibilityAdornment visible={passwordVisible}
+                            onClick={() => { setPasswordVisible(!passwordVisible) }}
+                        />
+                    }}
                     className={clsx(homeStyles.fullwidth)}
                     value={password}
                     onChange={(evt) => {

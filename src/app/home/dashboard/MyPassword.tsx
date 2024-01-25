@@ -134,7 +134,7 @@ export default function MyPassword({ authToken, expanded, onExpand, onUnauthenti
                 <TextField
                     required
                     label="Current Password"
-                    placeholder='P@sSw0rD'
+                    placeholder='P@ssw0rd'
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -157,7 +157,7 @@ export default function MyPassword({ authToken, expanded, onExpand, onUnauthenti
                 <TextField
                     required
                     label="New Password"
-                    placeholder='P@sSw0rD'
+                    placeholder='P@ssw0rd'
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -180,7 +180,7 @@ export default function MyPassword({ authToken, expanded, onExpand, onUnauthenti
                 <TextField
                     required
                     label="New Password Verfication"
-                    placeholder='P@sSw0rD'
+                    placeholder='P@ssw0rd'
                     InputLabelProps={{
                         shrink: true,
                     }}
