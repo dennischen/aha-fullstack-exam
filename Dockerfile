@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY --from=prod_env /app/node_modules ./node_modules/
 COPY build ./build/
-COPY package.json next.config.js ./
+COPY package.json next.config.js .env ./
 
 CMD ["yarn", "start"]
 

@@ -6,9 +6,7 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-//by using process.env['static string'] build variable, the value is replace in build time, can't update dynamically
-const allowOrigin = process.env['WEB_CROS_ALLOW_ORIGIN']
-
+const allowOrigin = process.env.WEB_CROS_ALLOW_ORIGIN
 
 console.log(`Use ALLOW_ORIGIN: '${allowOrigin}' on API`)
 
