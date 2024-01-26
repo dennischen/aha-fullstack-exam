@@ -15,6 +15,7 @@ import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFo
 
 const activationTokenGenerator = new UIDGenerator(256, UIDGenerator.BASE58)
 const authSessionTokenGenerator = new UIDGenerator(512, UIDGenerator.BASE58)
+const oAuthNewUserPasswordGenerator = new UIDGenerator(24, UIDGenerator.BASE58)
 
 export const dtoSchemaValidator = new Validator()
 dtoSchemaValidator.addSchema(OrderBySchema)
@@ -92,6 +93,10 @@ export async function generateAuthSessionToken() {
     return await authSessionTokenGenerator.generate()
 }
 
+export async function generateOAuthNewUserPassword() {
+    return await 'A@a1'+oAuthNewUserPasswordGenerator.generate()
+}
+
 export function responseJson<T>(data: T, init?: ResponseInit) {
     return Response.json(data, init)
 }
@@ -100,8 +105,8 @@ export function responseJson<T>(data: T, init?: ResponseInit) {
 export async function sendActivationEamil(user: User, activation: Activation) {
 
     const appName = process.env.APP_NAME
-    const appBaseUrl = process.env.WEB_BASE_URL
-    const activationUrl = `${appBaseUrl}/home/activate?token=${encodeURIComponent(activation.token)}`
+    const webBaseUrl = process.env.WEB_BASE_URL
+    const activationUrl = `${webBaseUrl}/home/activate?token=${encodeURIComponent(activation.token)}`
     const datetime = moment().format()
     const html =
         [`Dear ${user.displayName},`,

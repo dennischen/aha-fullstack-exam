@@ -25,6 +25,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
@@ -40,7 +41,7 @@ const preferredDatetimeFormat = 'YYYY-MM-DD HH:mm:ss'
 
 export default function UserList({ authToken, expanded, onExpand, onUnauthenticated }: Props) {
 
-
+    const { envVariables } = useWorkspace()
     const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [userInfoPage, setUserInfoPage] = useState<UserInfoPage>()
     const [userInfoQuery, setUserInfoQuery] = useState<UserInfoQuery>({
@@ -58,7 +59,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         setCommonHelp(undefined)
         setQuerying(true)
         const data: UserInfoQuery = query
-        axios.post(`/api/v0/adm/users`, data, {
+        axios.post(`${envVariables.API_BASE_URL}/api/v0/adm/users`, data, {
             headers: {
                 authToken
             }
@@ -75,7 +76,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         }).finally(() => {
             setQuerying(false)
         })
-    }, [authToken, onUnauthenticated])
+    }, [envVariables, authToken, onUnauthenticated])
 
     const onPage = (page: number) => {
         queryUserInfo({ ...userInfoQuery, ...{ index: page } })
@@ -109,7 +110,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                 {commonHelp?.error ?
                     <Button onClick={() => { queryUserInfo(userInfoQuery) }} disabled={querying}>Query again</Button>
                     : userInfoPage ? <>
-                        <Table sx={{ minWidth: 640 }}>
+                        <Table>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>
@@ -124,13 +125,13 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('displayName') }}
                                             disabled={querying}>Name</TableSortLabel></TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="right" className={homeStyles.displayNoneInXs}>
                                         <TableSortLabel
                                             active={orderBy.field === 'signedupDatetime'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('signedupDatetime') }}
                                             disabled={querying}>Signedup Datetime</TableSortLabel></TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="right" className={homeStyles.displayNoneInSm}>
                                         <TableSortLabel
                                             active={orderBy.field === 'lastAccessDatetime'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
@@ -146,8 +147,8 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                                             {user.email}
                                         </TableCell>
                                         <TableCell>{user.displayName}</TableCell>
-                                        <TableCell align="right">{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
-                                        <TableCell align="right">{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
+                                        <TableCell align="right" className={homeStyles.displayNoneInXs}>{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
+                                        <TableCell align="right" className={homeStyles.displayNoneInSm}>{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
                                         <TableCell align="right">{user.loginCount}</TableCell>
                                     </TableRow>
                                 ))}

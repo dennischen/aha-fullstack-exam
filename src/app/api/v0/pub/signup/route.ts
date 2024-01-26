@@ -85,6 +85,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         await sendActivationEamil(newUser, newActivation)
 
+        console.log(`Created new user ${newUser.email} from signup`)
+
         return responseJson<CommonResponse>({ message: `User '${newUser.email}' has been created, please check the email for the activation` })
     })
 }

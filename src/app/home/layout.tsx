@@ -35,7 +35,7 @@ export default function Layout({ children }: LayoutProps) {
     } = {}
     for (var p in process.env) {
         if (p.startsWith('CLIENT_PUBLIC_')) {
-            envVariables[p] = process.env[p]
+            envVariables[p.substring(14)] = process.env[p]
         }
     }
 

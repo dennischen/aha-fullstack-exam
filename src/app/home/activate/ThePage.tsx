@@ -13,6 +13,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from "@nextspace"
 import axios, { AxiosError } from "axios"
 import clsx from 'clsx'
 import { Validator } from "jsonschema"
@@ -28,6 +29,7 @@ export type ThePageProps = {
 }
 
 export default function ThePage(props: ThePageProps) {
+    const { envVariables } = useWorkspace()
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -61,7 +63,7 @@ export default function ThePage(props: ThePageProps) {
 
             const data: ActivationForm = { token: activationToken }
 
-            axios.post(`/api/v0/pub/activate`, data).then((res) => {
+            axios.post(`${envVariables.API_BASE_URL}/api/v0/pub/activate`, data).then((res) => {
 
                 const auth: Authentication = res.data
 
@@ -84,7 +86,7 @@ export default function ThePage(props: ThePageProps) {
 
         }
 
-    }, [router, activationToken])
+    }, [envVariables, router, activationToken])
 
     useEffect(() => {
         const activationToken = searchParams?.get('token')
@@ -96,11 +98,11 @@ export default function ThePage(props: ThePageProps) {
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {authToken && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            {authToken && <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
                 <Typography variant='h6'>{profile?.displayName}, You are now logged in</Typography>
                 <Link href='/home/dashboard'>Redirect to dashboard</Link>
             </div>}
-            {!authToken && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
+            {!authToken && <form className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickActivate()

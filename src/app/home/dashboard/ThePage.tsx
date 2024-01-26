@@ -24,10 +24,13 @@ import MyProfile from './MyProfile'
 import SendActivation from './SendActivation'
 import UserList from './UserList'
 import UserStatastics from './UserStatastics'
+import { useWorkspace } from '@nextspace'
 
 export type ThePageProps = {}
 
 export default function ThePage({ }: ThePageProps) {
+
+    const { envVariables } = useWorkspace()
     const router = useRouter()
 
     const [commonHelp, setCommonHelp] = useState<CommonHelp>()
@@ -49,7 +52,7 @@ export default function ThePage({ }: ThePageProps) {
         if (profile) {
             setProfile(profile)
         } else if (authToken) {
-            axios.get(`/api/v0/pri/profile`, {
+            axios.get(`${envVariables.API_BASE_URL}/api/v0/pri/profile`, {
                 headers: {
                     authToken: authToken
                 }
@@ -68,7 +71,7 @@ export default function ThePage({ }: ThePageProps) {
                 }
             })
         }
-    }, [router])
+    }, [envVariables, router])
 
     const togglePanel = useCallback((panel: string, exapned: boolean) => {
         if (exapned) {
@@ -92,7 +95,7 @@ export default function ThePage({ }: ThePageProps) {
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
                 <Typography variant='h6' >Dashboard{profile && `, ${profile.displayName}`}</Typography>
 
                 {authToken && profile ?

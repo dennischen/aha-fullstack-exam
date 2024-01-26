@@ -19,6 +19,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Skeleton from '@mui/material/Skeleton'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -31,7 +32,7 @@ type Props = {
 
 export default function UserStatisticsView({ authToken, expanded, onExpand, onUnauthenticated }: Props) {
 
-
+    const { envVariables } = useWorkspace()
     const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [userStatastics, setUserStatastics] = useState<UserStatistics>()
     const [querying, setQuerying] = useState(false)
@@ -40,7 +41,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
     const queryUserStatastics = useCallback(() => {
         setCommonHelp(undefined)
         setQuerying(true)
-        axios.get(`/api/v0/adm/user-statistics`, {
+        axios.get(`${envVariables.API_BASE_URL}/api/v0/adm/user-statistics`, {
             headers: {
                 authToken
             }
@@ -56,7 +57,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
         }).finally(() => {
             setQuerying(false)
         })
-    }, [authToken, onUnauthenticated])
+    }, [envVariables, authToken, onUnauthenticated])
 
     useEffect(() => {
         if (expanded) {
@@ -75,7 +76,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
             </div>
         </AccordionSummary>
         <AccordionDetails>
-            <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32 }}>
+            <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32 }}>
                 {commonHelp?.error ?
                     <Button onClick={queryUserStatastics} disabled={querying}>Query again</Button>
                     : userStatastics ? <>

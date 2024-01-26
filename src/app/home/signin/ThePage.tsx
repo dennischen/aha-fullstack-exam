@@ -14,6 +14,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from "@nextspace"
 import axios, { AxiosError } from "axios"
 import clsx from 'clsx'
 import { Validator } from "jsonschema"
@@ -31,8 +32,8 @@ export type ThePageProps = {
 
 export default function ThePage(props: ThePageProps) {
 
+    const { envVariables } = useWorkspace()
     const router = useRouter()
-
     const [email, setEmail] = useState('')
     const [emailHelp, setEmailHelp] = useState('')
     const [password, setPassword] = useState('')
@@ -77,7 +78,7 @@ export default function ThePage(props: ThePageProps) {
                 password
             }
             
-            axios.post(`/api/v0/pub/signin`, data).then((res) => {
+            axios.post(`${envVariables.API_BASE_URL}/api/v0/pub/signin`, data).then((res) => {
 
                 const auth: Authentication = res.data
 
@@ -100,17 +101,17 @@ export default function ThePage(props: ThePageProps) {
 
         }
 
-    }, [router, email, password])
+    }, [envVariables, router, email, password])
 
 
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {authToken && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            {authToken && <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
                 <Typography variant='h6'>{profile?.displayName}, You are now logged in</Typography>
                 <Link href='/home/dashboard'>Redirect to dashboard</Link>
             </div>}
-            {!authToken && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
+            {!authToken && <form className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickSignin()
@@ -163,13 +164,14 @@ export default function ThePage(props: ThePageProps) {
                 </FormHelperText>}
 
 
-                <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                    <Link href='/home/oauth/google'>Sing in with Google</Link>
                     <Button onClick={onClickSignin} variant="contained" disabled={signing} type="submit">Signin</Button>
                 </div>
             </form>}
         </Paper>
-        <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'center', gap: 24 }}>
+        {!authToken && <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'center', gap: 24 }}>
             <Link href='/home'>Home</Link>
-        </div>
+        </div>}
     </main>
 }

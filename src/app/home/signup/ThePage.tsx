@@ -14,6 +14,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from "@nextspace"
 import axios, { AxiosError } from "axios"
 import clsx from 'clsx'
 import { Validator } from "jsonschema"
@@ -27,7 +28,7 @@ export type ThePageProps = {}
 
 export default function ThePage({ }: ThePageProps) {
     const router = useRouter()
-
+    const { envVariables } = useWorkspace()
     const [email, setEmail] = useState('')
     const [emailHelp, setEmailHelp] = useState('')
     const [displayName, setDisplayName] = useState('')
@@ -101,7 +102,7 @@ export default function ThePage({ }: ThePageProps) {
                 password
             }
 
-            axios.post(`/api/v0/pub/signup`, data).then((res) => {
+            axios.post(`${envVariables.API_BASE_URL}/api/v0/pub/signup`, data).then((res) => {
                 setSignupCompleted(res.data as CommonResponse)
             }).catch((err: AxiosError) => {
                 setCommonHelp(getErrorCommonHelp(err))
@@ -111,11 +112,11 @@ export default function ThePage({ }: ThePageProps) {
 
         }
 
-    }, [email, displayName, password, passwordVerify])
+    }, [envVariables, email, displayName, password, passwordVerify])
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {signupCompleted && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            {signupCompleted && <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
                 <Typography variant='h6' >Congratulations! You are Now Signed Up!</Typography>
                 <Typography >Please check your email for activation</Typography>
                 <FormHelperText>
@@ -127,7 +128,7 @@ export default function ThePage({ }: ThePageProps) {
                     }} disabled={registering}>Home</Button>
                 </div>
             </div>}
-            {!signupCompleted && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
+            {!signupCompleted && <form className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickRegister()
@@ -221,6 +222,7 @@ export default function ThePage({ }: ThePageProps) {
 
 
                 <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                    <Link href='/home/oauth/google'>Sing up with Google</Link>
                     <Button onClick={onClickRegister} variant="contained" disabled={registering} type="submit">Register</Button>
                 </div>
             </form>}
