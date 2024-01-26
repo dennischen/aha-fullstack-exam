@@ -76,7 +76,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
             </div>
         </AccordionSummary>
         <AccordionDetails>
-            <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32 }}>
+            <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32 }}>
                 {commonHelp?.error ?
                     <Button onClick={queryUserStatastics} disabled={querying}>Query again</Button>
                     : userStatastics ? <>

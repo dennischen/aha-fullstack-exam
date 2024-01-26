@@ -19,13 +19,13 @@ export default function ThePage({ }: ThePageProps) {
     const { l, language } = useI18n()
 
     return <main className={homeStyles.main}>
-        <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+        <div className={homeStyles.vlayout} style={{ justifyContent: 'center', padding: 16, gap: 32}}>
             <Typography variant='h6' >Welcome to {l('appName')}</Typography>
-            <div style={{ height: 180 }}>
-                <Image src='/vercel.svg' alt='' width={394} height={180}/>
+            <div>
+                <Image src='/images/colaorange.png' alt='' width={300} height={300}/>
             </div>
         </div>
-        <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'center', gap: 48 }}>
+        <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 16, justifyContent: 'center', gap: 48 }}>
             <Link href={'/home/signup'} >Signup</Link>
             <Link href={'/home/signin'} >Signin</Link>
         </div>

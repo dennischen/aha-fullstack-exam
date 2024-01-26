@@ -100,7 +100,7 @@ export default function MyProfile({ authToken, profile, expanded, onExpand, onUn
             </div>
         </AccordionSummary>
         <AccordionDetails>
-            <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32 }}
+            <form className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32 }}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickUpdate()

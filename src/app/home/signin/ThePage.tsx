@@ -107,11 +107,11 @@ export default function ThePage(props: ThePageProps) {
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {authToken && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            {authToken && <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
                 <Typography variant='h6'>{profile?.displayName}, You are now logged in</Typography>
                 <Link href='/home/dashboard'>Redirect to dashboard</Link>
             </div>}
-            {!authToken && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
+            {!authToken && <form className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickSignin()

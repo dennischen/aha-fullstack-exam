@@ -116,7 +116,7 @@ export default function ThePage({ }: ThePageProps) {
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            {signupCompleted && <div className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}>
+            {signupCompleted && <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
                 <Typography variant='h6' >Congratulations! You are Now Signed Up!</Typography>
                 <Typography >Please check your email for activation</Typography>
                 <FormHelperText>
@@ -128,7 +128,7 @@ export default function ThePage({ }: ThePageProps) {
                     }} disabled={registering}>Home</Button>
                 </div>
             </div>}
-            {!signupCompleted && <form className={homeStyles.vlayout} style={{ padding: 16, justifyContent: 'center', gap: 32, width: 800 }}
+            {!signupCompleted && <form className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}
                 onSubmit={(evt) => {
                     evt.preventDefault()
                     onClickRegister()

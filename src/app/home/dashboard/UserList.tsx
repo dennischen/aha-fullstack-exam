@@ -110,7 +110,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                 {commonHelp?.error ?
                     <Button onClick={() => { queryUserInfo(userInfoQuery) }} disabled={querying}>Query again</Button>
                     : userInfoPage ? <>
-                        <Table sx={{ minWidth: 640 }}>
+                        <Table>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>
@@ -125,13 +125,13 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('displayName') }}
                                             disabled={querying}>Name</TableSortLabel></TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="right" className={homeStyles.displayNoneInXs}>
                                         <TableSortLabel
                                             active={orderBy.field === 'signedupDatetime'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('signedupDatetime') }}
                                             disabled={querying}>Signedup Datetime</TableSortLabel></TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="right" className={homeStyles.displayNoneInSm}>
                                         <TableSortLabel
                                             active={orderBy.field === 'lastAccessDatetime'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
@@ -147,8 +147,8 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                                             {user.email}
                                         </TableCell>
                                         <TableCell>{user.displayName}</TableCell>
-                                        <TableCell align="right">{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
-                                        <TableCell align="right">{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
+                                        <TableCell align="right" className={homeStyles.displayNoneInXs}>{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
+                                        <TableCell align="right" className={homeStyles.displayNoneInSm}>{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
                                         <TableCell align="right">{user.loginCount}</TableCell>
                                     </TableRow>
                                 ))}
