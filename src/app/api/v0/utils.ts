@@ -15,6 +15,7 @@ import { ActivationFormSchema, AuthenticationFormSchema, OrderBySchema, SigninFo
 
 const activationTokenGenerator = new UIDGenerator(256, UIDGenerator.BASE58)
 const authSessionTokenGenerator = new UIDGenerator(512, UIDGenerator.BASE58)
+const oAuthNewUserPasswordGenerator = new UIDGenerator(24, UIDGenerator.BASE58)
 
 export const dtoSchemaValidator = new Validator()
 dtoSchemaValidator.addSchema(OrderBySchema)
@@ -90,6 +91,10 @@ export async function generateActivationToken() {
 
 export async function generateAuthSessionToken() {
     return await authSessionTokenGenerator.generate()
+}
+
+export async function generateOAuthNewUserPassword() {
+    return await 'A@a1'+oAuthNewUserPasswordGenerator.generate()
 }
 
 export function responseJson<T>(data: T, init?: ResponseInit) {

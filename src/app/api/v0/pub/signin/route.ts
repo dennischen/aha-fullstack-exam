@@ -83,6 +83,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
         //create new auth session
         const authSession = await authSessionDao.create({ token: await generateAuthSessionToken(), userUid: user.uid })
 
+        console.log(`User ${user.email} signin system`)
+
         return responseJson<Authentication>({ authToken: authSession.token, profile: { email: user.email, displayName: user.displayName, activated: user.activated } })
 
     })

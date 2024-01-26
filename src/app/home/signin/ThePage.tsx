@@ -163,13 +163,14 @@ export default function ThePage(props: ThePageProps) {
                 </FormHelperText>}
 
 
-                <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                    <Link href='/home/oauth/google'>Sing in with Google</Link>
                     <Button onClick={onClickSignin} variant="contained" disabled={signing} type="submit">Signin</Button>
                 </div>
             </form>}
         </Paper>
-        <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'center', gap: 24 }}>
+        {!authToken && <div className={homeStyles.hlayout} style={{ padding: 8, justifyContent: 'center', gap: 24 }}>
             <Link href='/home'>Home</Link>
-        </div>
+        </div>}
     </main>
 }

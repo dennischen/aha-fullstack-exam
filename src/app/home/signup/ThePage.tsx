@@ -221,6 +221,7 @@ export default function ThePage({ }: ThePageProps) {
 
 
                 <div className={clsx(homeStyles.hlayout, homeStyles.fullwidth)} style={{ padding: 8, justifyContent: 'end', gap: 24 }}>
+                    <Link href='/home/oauth/google'>Sing up with Google</Link>
                     <Button onClick={onClickRegister} variant="contained" disabled={registering} type="submit">Register</Button>
                 </div>
             </form>}

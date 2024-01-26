@@ -9,6 +9,7 @@ import axios from 'axios'
 import { cookies, headers } from 'next/headers'
 import 'server-only'
 import { COOKIE_LANGUAGE, DEFAULT_LANGUAGE, } from './constants'
+import moment from 'moment'
 
 export function getUserPreference() {
 
@@ -28,6 +29,10 @@ export function getUserPreference() {
 export function findAuthTokenInCookie(): string | undefined {
     return cookies().get('authToken')?.value
 
+}
+
+export function setAuthTokenToCookie(authToken: string){
+    cookies().set('authToken', authToken, { path: '/', maxAge: moment.duration(7, 'days').asSeconds() })
 }
 
 export async function findAuthenticationInCookie(): Promise<Authentication | undefined> {

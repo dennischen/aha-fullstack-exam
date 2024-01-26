@@ -36,7 +36,7 @@ export default function ThePage(props: ThePageProps) {
                     //has to use refresh to clean route cache (for invalidate token)
                     router.refresh();
                     router.push('/home')
-                }, 100)
+                }, 200)
             }).catch((err:AxiosError) => {
                 //eat
             })

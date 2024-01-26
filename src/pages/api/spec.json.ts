@@ -26,6 +26,9 @@ export const swaggerOptions: SwaggerOptions = {
             name: 'pub',
             description: 'API for unauthenticated request'
         }, {
+            name: 'oauth',
+            description: 'API for oauth request'
+        }, {
             name: 'pri',
             description: 'API for authenticated user request.'
         }, {
