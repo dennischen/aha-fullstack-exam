@@ -14,6 +14,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from "@nextspace"
 import axios, { AxiosError } from "axios"
 import clsx from 'clsx'
 import { Validator } from "jsonschema"
@@ -27,7 +28,7 @@ export type ThePageProps = {}
 
 export default function ThePage({ }: ThePageProps) {
     const router = useRouter()
-
+    const { envVariables } = useWorkspace()
     const [email, setEmail] = useState('')
     const [emailHelp, setEmailHelp] = useState('')
     const [displayName, setDisplayName] = useState('')
@@ -101,7 +102,7 @@ export default function ThePage({ }: ThePageProps) {
                 password
             }
 
-            axios.post(`/api/v0/pub/signup`, data).then((res) => {
+            axios.post(`${envVariables.API_BASE_URL}/api/v0/pub/signup`, data).then((res) => {
                 setSignupCompleted(res.data as CommonResponse)
             }).catch((err: AxiosError) => {
                 setCommonHelp(getErrorCommonHelp(err))
@@ -111,7 +112,7 @@ export default function ThePage({ }: ThePageProps) {
 
         }
 
-    }, [email, displayName, password, passwordVerify])
+    }, [envVariables, email, displayName, password, passwordVerify])
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>

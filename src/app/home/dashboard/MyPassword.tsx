@@ -19,6 +19,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import FormHelperText from '@mui/material/FormHelperText'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import clsx from 'clsx'
 import { Validator } from 'jsonschema'
@@ -35,6 +36,7 @@ type Props = {
 
 export default function MyPassword({ authToken, expanded, onExpand, onUnauthenticated, }: Props) {
 
+    const { envVariables } = useWorkspace()
     const [currentPassword, setCurrentPassword] = useState('')
     const [currentPasswordHelp, setCurrentPasswordHelp] = useState('')
     const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false)
@@ -92,7 +94,7 @@ export default function MyPassword({ authToken, expanded, onExpand, onUnauthenti
                 newPassword
             }
 
-            axios.post(`/api/v0/pri/password`, data, {
+            axios.post(`${envVariables.API_BASE_URL}/api/v0/pri/password`, data, {
                 headers: {
                     authToken
                 }
@@ -114,7 +116,7 @@ export default function MyPassword({ authToken, expanded, onExpand, onUnauthenti
 
         }
 
-    }, [authToken, onUnauthenticated, currentPassword, newPassword, newPasswordVerify])
+    }, [envVariables, authToken, onUnauthenticated, currentPassword, newPassword, newPasswordVerify])
 
     return <Accordion expanded={expanded} onChange={(evt, expanded) => { onExpand(expanded) }}>
         <AccordionSummary

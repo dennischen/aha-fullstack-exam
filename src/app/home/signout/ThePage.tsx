@@ -8,6 +8,7 @@ import { cleanClientAuthentication, getCookieAuthToken } from "@/app/home/client
 import homeStyles from "@/app/home/home.module.scss"
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from "@nextspace"
 import axios, { AxiosError } from "axios"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -19,11 +20,12 @@ export type ThePageProps = {
 
 export default function ThePage(props: ThePageProps) {
     const router = useRouter()
+    const { envVariables } = useWorkspace()
 
     useEffect(() => {
         const authToken = getCookieAuthToken()
         if (authToken) {
-            axios.get(`/api/v0/pri/signout`, {
+            axios.get(`${envVariables.API_BASE_URL}/api/v0/pri/signout`, {
                 headers: {
                     authToken: authToken
                 }
@@ -44,7 +46,7 @@ export default function ThePage(props: ThePageProps) {
             router.refresh();
             router.push('/home')
         }
-    }, [router])
+    }, [envVariables, router])
 
 
     return <main className={homeStyles.main}>

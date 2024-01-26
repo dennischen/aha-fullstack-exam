@@ -21,8 +21,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 
-const scheamValidator = new Validator()
-
 //passed from server component
 export type ThePageProps = {
     authToken?: string
@@ -44,7 +42,7 @@ export default function ThePage(props: ThePageProps) {
                 router.replace('/home/dashboard')
             }, 200)
         }
-    }, [authToken, profile])
+    }, [router, authToken, profile])
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>

@@ -18,6 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import FormHelperText from '@mui/material/FormHelperText'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import clsx from 'clsx'
 import { Validator } from 'jsonschema'
@@ -36,6 +37,7 @@ type Props = {
 
 export default function MyProfile({ authToken, profile, expanded, onExpand, onUnauthenticated, onUpdateProfile }: Props) {
 
+    const { envVariables } = useWorkspace()
     const [displayName, setDisplayName] = useState(profile.displayName ?? '')
     const [displayNameHelp, setDisplayNameHelp] = useState('')
 
@@ -66,7 +68,7 @@ export default function MyProfile({ authToken, profile, expanded, onExpand, onUn
                 displayName
             }
 
-            axios.post(`/api/v0/pri/profile`, data, {
+            axios.post(`${envVariables.API_BASE_URL}/api/v0/pri/profile`, data, {
                 headers: {
                     authToken
                 }
@@ -86,7 +88,7 @@ export default function MyProfile({ authToken, profile, expanded, onExpand, onUn
 
         }
 
-    }, [authToken, onUnauthenticated, onUpdateProfile, displayName])
+    }, [envVariables, authToken, onUnauthenticated, onUpdateProfile, displayName])
 
     return <Accordion expanded={expanded} onChange={(evt, expanded) => { onExpand(expanded) }}>
         <AccordionSummary

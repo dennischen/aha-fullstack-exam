@@ -14,6 +14,7 @@ import axios, { AxiosError } from 'axios'
 import clsx from 'clsx'
 import { useCallback, useState } from 'react'
 import { getErrorCommonHelp } from '../client-utils'
+import { useWorkspace } from '@nextspace'
 
 type Props = {
     authToken: string,
@@ -23,6 +24,7 @@ type Props = {
 
 export default function SendActivation({ authToken, profile, onUnauthenticated }: Props) {
 
+    const { envVariables } = useWorkspace()
     const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [updating, setUpdating] = useState(false)
 
@@ -30,7 +32,7 @@ export default function SendActivation({ authToken, profile, onUnauthenticated }
 
         setUpdating(true)
 
-        axios.get(`/api/v0/pri/send-activation`, {
+        axios.get(`${envVariables.API_BASE_URL}/api/v0/pri/send-activation`, {
             headers: {
                 authToken
             }
@@ -47,7 +49,7 @@ export default function SendActivation({ authToken, profile, onUnauthenticated }
             setUpdating(false)
         })
 
-    }, [authToken, onUnauthenticated])
+    }, [envVariables, authToken, onUnauthenticated])
 
     return <div className={homeStyles.vlayout}>
         <Typography>The account associated with {profile.displayName} has not been activated yet. Kindly activate it first by clicking the button below to resend the activation email.</Typography>

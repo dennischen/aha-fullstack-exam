@@ -25,6 +25,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
@@ -40,7 +41,7 @@ const preferredDatetimeFormat = 'YYYY-MM-DD HH:mm:ss'
 
 export default function UserList({ authToken, expanded, onExpand, onUnauthenticated }: Props) {
 
-
+    const { envVariables } = useWorkspace()
     const [commonHelp, setCommonHelp] = useState<CommonHelp>()
     const [userInfoPage, setUserInfoPage] = useState<UserInfoPage>()
     const [userInfoQuery, setUserInfoQuery] = useState<UserInfoQuery>({
@@ -58,7 +59,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         setCommonHelp(undefined)
         setQuerying(true)
         const data: UserInfoQuery = query
-        axios.post(`/api/v0/adm/users`, data, {
+        axios.post(`${envVariables.API_BASE_URL}/api/v0/adm/users`, data, {
             headers: {
                 authToken
             }
@@ -75,7 +76,7 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
         }).finally(() => {
             setQuerying(false)
         })
-    }, [authToken, onUnauthenticated])
+    }, [envVariables, authToken, onUnauthenticated])
 
     const onPage = (page: number) => {
         queryUserInfo({ ...userInfoQuery, ...{ index: page } })
