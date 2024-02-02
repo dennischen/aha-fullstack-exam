@@ -94,7 +94,7 @@ export async function generateAuthSessionToken() {
 }
 
 export async function generateOAuthNewUserPassword() {
-    return await 'A@a1'+oAuthNewUserPasswordGenerator.generate()
+    return 'A@a1'+oAuthNewUserPasswordGenerator.generate()
 }
 
 export function responseJson<T>(data: T, init?: ResponseInit) {

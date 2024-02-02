@@ -6,15 +6,15 @@ import { PageableSchema, UserDao, UserOrderBy, UserPagable, UserPage } from "@/s
 import { User, UserCreate, UserCreateSchema, UserUpdate, UserUpdateSchema } from "@/service/entity"
 import { validateServiceArgument } from "@/service/utils"
 
+import { ServiceError } from "@/service"
 import type { Connection, OkPacket } from 'mysql'
 import { v4 as uuidv4 } from 'uuid'
 import { query, toOrderByExpression } from "./mysql-utils"
-import { ServiceError } from "@/service"
 
 const TABLE = 'AHA_USER'
 
 function wrapUserFromRowDataPacket(user: User /*RowDataPacket*/) {
-    return {
+    const o: User = {
         uid: user.uid,
         email: user.email,
         createdDatetime: user.createdDatetime,
@@ -23,8 +23,10 @@ function wrapUserFromRowDataPacket(user: User /*RowDataPacket*/) {
         activated: !!user.activated,//bit -> boolean
         displayName: user.displayName,
         hashedPassword: user.hashedPassword,
-        lastAccessDatetime: user.lastAccessDatetime ?? undefined
-    } as User
+        lastAccessDatetime: user.lastAccessDatetime ?? undefined,
+        signupDomain: user.signupDomain ?? undefined
+    }
+    return o
 }
 
 export class MysqlUserDao implements UserDao {
@@ -38,7 +40,7 @@ export class MysqlUserDao implements UserDao {
     async create(userCreate: UserCreate): Promise<User> {
 
         userCreate = await validateServiceArgument(userCreate, UserCreateSchema)
-        
+
         const uid = uuidv4()
 
         const user: User = {
@@ -50,6 +52,7 @@ export class MysqlUserDao implements UserDao {
             activated: userCreate.activated ?? false,
             displayName: userCreate.displayName,
             hashedPassword: userCreate.hashedPassword,
+            signupDomain: userCreate.signupDomain,
             lastAccessDatetime: undefined
         }
 
@@ -105,7 +108,7 @@ export class MysqlUserDao implements UserDao {
     }
 
     async update(uid: string, userUpdate: UserUpdate): Promise<User> {
-        
+
         userUpdate = await validateServiceArgument(userUpdate, UserUpdateSchema)
 
         const { disabled, displayName, activated, hashedPassword, lastAccessDatetime, loginCount } = userUpdate

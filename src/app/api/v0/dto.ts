@@ -13,6 +13,11 @@ import type { Schema } from "jsonschema"
 export const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+=])[a-zA-Z\d!@#$%^&*()\-_+=]{8,}$/
 export const passwordPatternMsg = 'Ensure your password is at least 8 characters long and includes at least one lowercase, one uppercase, one digit, and one special character.'
 
+export enum AuthDomain {
+    GOOGLE_OAUTH2 = 'google-oauth2'
+}
+
+
 /**
  * @swagger
  * components:
@@ -142,7 +147,7 @@ export type SigninForm = {
  *         - activated
  */
 export type Authentication = {
-    authToken: string,
+    authToken: string
     profile: Profile
 }
 
@@ -248,14 +253,18 @@ export type CommonResponse = {
  *         activated: 
  *           type: boolean
  *           description: 'User is activated or not'
+ *         signinDomain:
+ *           type: string
+ *           description: 'The signin domain of current authentication of the user'
  *       required:
  *         - email
  *         - displayName
  */
 export type Profile = {
-    email: string,
+    email: string
     displayName: string
     activated: boolean
+    singinDomain?: string
 }
 
 /**

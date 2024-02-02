@@ -4,7 +4,7 @@
  */
 
 import { ApiError } from "@/app/api/v0"
-import { Authentication, CommonResponse } from "@/app/api/v0/dto"
+import { AuthDomain, Authentication, CommonResponse } from "@/app/api/v0/dto"
 import { generateAuthSessionToken, generateOAuthNewUserPassword, hashPassword, responseJson } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { google } from "googleapis"
@@ -31,7 +31,7 @@ const REDIRECT_URI = process.env.WEB_BASE_URL + '/home/oauth/google'
  *           type: string
  *     responses:
  *       200:
- *         description: "Successfully signin/singup to the system by Google Oauth."
+ *         description: "Successfully signin/signup to the system by Google Oauth."
  *         content:
  *           application/json:
  *             schema:
@@ -114,7 +114,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
                 email: userEmail,
                 hashedPassword: hashedPassword,
                 displayName: userDisplayName,
-                activated: true
+                activated: true,
+                signupDomain: AuthDomain.GOOGLE_OAUTH2
             })
             console.log(`Created new user ${userEmail} from google oauth `)
         }
@@ -135,10 +136,23 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
 
         //create new auth session
-        const authSession = await authSessionDao.create({ token: await generateAuthSessionToken(), userUid: user.uid })
+        const authSession = await authSessionDao.create({ 
+            token: await generateAuthSessionToken(), 
+            userUid: user.uid, 
+            signinDomain: AuthDomain.GOOGLE_OAUTH2
+        })
 
         console.log(`User ${user.email} signin system from google oauth`)
 
-        return responseJson<Authentication>({ authToken: authSession.token, profile: { email: user.email, displayName: user.displayName, activated: user.activated } })
+        return responseJson<Authentication>({ 
+            authToken: authSession.token, 
+            profile: { 
+                email: user.email, 
+                displayName: user.displayName, 
+                activated: 
+                user.activated,
+                singinDomain: authSession.signinDomain
+            }
+        })
     })
 }
