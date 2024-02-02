@@ -109,7 +109,8 @@ if (!host || !user || !database) {
                 loginCount,
                 lastAccessDatetime,
                 createdDatetime,
-                disabled
+                disabled, 
+                signupDomain
             } = user
 
             expect(uid).toBeTruthy()
@@ -121,6 +122,7 @@ if (!host || !user || !database) {
             expect(loginCount).toEqual(0)
             expect(lastAccessDatetime).not.toBeTruthy()
             expect(disabled).toEqual(false)
+            expect(signupDomain).not.toBeTruthy()
 
             count = await userDao.count()
             expect(count).toEqual(1)
@@ -137,6 +139,7 @@ if (!host || !user || !database) {
             expect(user1.loginCount).toEqual(loginCount)
             expect(user1.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user1.disabled).toEqual(disabled)
+            expect(user1.signupDomain).not.toBeTruthy()
 
             expect(user1).toEqual(user)
 
@@ -160,6 +163,7 @@ if (!host || !user || !database) {
             expect(user2!.loginCount).toEqual(loginCount)
             expect(user2!.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user2!.disabled).toEqual(disabled)
+            expect(user2!.signupDomain).not.toBeTruthy()
 
             expect(user2).toEqual(user)
 
@@ -177,6 +181,7 @@ if (!host || !user || !database) {
             expect(user3!.loginCount).toEqual(loginCount)
             expect(user3!.lastAccessDatetime).toEqual(lastAccessDatetime)
             expect(user3!.disabled).toEqual(disabled)
+            expect(user3!.signupDomain).not.toBeTruthy()
 
             expect(user3).toEqual(user)
 
@@ -190,6 +195,89 @@ if (!host || !user || !database) {
 
             const deleted2 = await userDao.delete('nosuchid')
             expect(deleted2).not.toBeTruthy()
+
+            count = await userDao.count()
+            expect(count).toEqual(0)
+        })
+
+        it('should create a user with signup domain correctly', async () => {
+
+            const userDao = new MysqlUserDao(connection!)
+
+            let count = await userDao.count()
+
+            expect(count).toEqual(0)
+
+            const user = await userDao.create({
+                email: 'atticcat@gmail.com',
+                displayName: 'Dennis Chen',
+                hashedPassword: '12345678',
+                signupDomain: 'xyz'
+            })
+            expect(user).toBeTruthy()
+
+            let {
+                uid,
+                displayName,
+                email,
+                activated,
+                hashedPassword,
+                loginCount,
+                lastAccessDatetime,
+                createdDatetime,
+                disabled,
+                signupDomain
+            } = user
+
+            expect(uid).toBeTruthy()
+            expect(email).toEqual('atticcat@gmail.com')
+            expect(displayName).toEqual('Dennis Chen')
+            expect(hashedPassword).toEqual('12345678')
+            expect(createdDatetime).toBeTruthy()
+            expect(activated).toEqual(false)
+            expect(loginCount).toEqual(0)
+            expect(lastAccessDatetime).not.toBeTruthy()
+            expect(disabled).toEqual(false)
+            expect(signupDomain).toEqual('xyz')
+
+            count = await userDao.count()
+            expect(count).toEqual(1)
+
+            const user1 = await userDao.get(user.uid)
+            expect(user1).toBeTruthy()
+
+            expect(user1.uid).toEqual(uid)
+            expect(user1.email).toEqual(email)
+            expect(user1.displayName).toEqual(displayName)
+            expect(user1.hashedPassword).toEqual(hashedPassword)
+            expect(user1.createdDatetime).toEqual(createdDatetime)
+            expect(user1.activated).toEqual(activated)
+            expect(user1.loginCount).toEqual(loginCount)
+            expect(user1.lastAccessDatetime).toEqual(lastAccessDatetime)
+            expect(user1.disabled).toEqual(disabled)
+            expect(user1.signupDomain).toEqual('xyz')
+
+            expect(user1).toEqual(user)
+
+            const user2 = await userDao.findByEmail('atticcat@gmail.com')
+
+            expect(user2).toBeTruthy()
+
+            expect(user2!.uid).toEqual(uid)
+            expect(user2!.email).toEqual(email)
+            expect(user2!.displayName).toEqual(displayName)
+            expect(user2!.hashedPassword).toEqual(hashedPassword)
+            expect(user2!.createdDatetime).toEqual(createdDatetime)
+            expect(user2!.activated).toEqual(activated)
+            expect(user2!.loginCount).toEqual(loginCount)
+            expect(user2!.lastAccessDatetime).toEqual(lastAccessDatetime)
+            expect(user2!.disabled).toEqual(disabled)
+            expect(user2!.signupDomain).toEqual('xyz')
+
+            expect(user2).toEqual(user)
+
+
+            await userDao.delete(user.uid)
 
             count = await userDao.count()
             expect(count).toEqual(0)
@@ -298,7 +386,8 @@ if (!host || !user || !database) {
             const user2 = await userDao.create({
                 email: 'atticcat2@gmail.com',
                 displayName: 'Dennis Chen 2',
-                hashedPassword: '87654321'
+                hashedPassword: '87654321',
+                signupDomain: 'xyz'
             })
 
             let user = await userDao.get(user1.uid)
@@ -323,6 +412,7 @@ if (!host || !user || !database) {
             expect(user.loginCount).toEqual(user1.loginCount)
             expect(user.lastAccessDatetime).toEqual(user1.lastAccessDatetime)
             expect(user.disabled).toEqual(user1.disabled)
+            expect(user.signupDomain).toEqual(user1.signupDomain)
 
 
             user = await userDao.update(user1.uid, {
@@ -342,6 +432,7 @@ if (!host || !user || !database) {
             expect(user.loginCount).toEqual(20)
             expect(user.lastAccessDatetime).toEqual(7788)
             expect(user.disabled).toEqual(true)
+            expect(user.signupDomain).toEqual(user1.signupDomain)
 
 
             let userx = await userDao.get(user1.uid)

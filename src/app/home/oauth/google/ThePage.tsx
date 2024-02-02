@@ -33,7 +33,6 @@ export default function ThePage(props: ThePageProps) {
 
     const { authToken, profile } = props
 
-
     useEffect(() => {
         if (authToken && profile) {
             setClientAuthentication({ authToken, profile })

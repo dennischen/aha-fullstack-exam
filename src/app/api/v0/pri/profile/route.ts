@@ -62,7 +62,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
 
-        return responseJson<Profile>({ email: user.email, displayName: user.displayName, activated: user.activated })
+        return responseJson<Profile>({ 
+            email: user.email, 
+            displayName: 
+            user.displayName, 
+            activated: user.activated,
+            singinDomain: authSession!.signinDomain
+        })
     })
 }
 
@@ -137,6 +143,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         await authSessionDao.update(authSession!.uid, { lastAccessDatetime: now })
 
-        return responseJson<Profile>({ email: user.email, displayName: user.displayName, activated: user.activated })
+        return responseJson<Profile>({ 
+            email: user.email, 
+            displayName: user.displayName, 
+            activated: user.activated,
+            singinDomain: authSession!.signinDomain
+        })
     })
 }

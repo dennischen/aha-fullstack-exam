@@ -113,7 +113,8 @@ if (!host || !user || !database) {
                 lastAccessDatetime,
                 createdDatetime,
                 invalid,
-                token
+                token,
+                signinDomain
             } = authSession
 
             expect(uid).toBeTruthy()
@@ -122,6 +123,7 @@ if (!host || !user || !database) {
             expect(createdDatetime).toBeTruthy()
             expect(invalid).toEqual(false)
             expect(lastAccessDatetime).toBeTruthy()
+            expect(signinDomain).not.toBeTruthy()
 
             count = await authSessionDao.count()
             expect(count).toEqual(1)
@@ -135,6 +137,7 @@ if (!host || !user || !database) {
             expect(authSession1.createdDatetime).toEqual(createdDatetime)
             expect(authSession1.invalid).toEqual(invalid)
             expect(authSession1.lastAccessDatetime).toEqual(lastAccessDatetime)
+            expect(authSession1.signinDomain).toEqual(signinDomain)
 
             expect(authSession1).toEqual(authSession)
 
@@ -167,6 +170,113 @@ if (!host || !user || !database) {
             expect(authSession2!.createdDatetime).toEqual(createdDatetime)
             expect(authSession2!.invalid).toEqual(invalid)
             expect(authSession2!.lastAccessDatetime).toEqual(lastAccessDatetime)
+            expect(authSession2!.signinDomain).toEqual(signinDomain)
+
+            expect(authSession2).toEqual(authSession)
+
+            const authSession3 = await authSessionDao.findByToken('nosuchtoken')
+
+            expect(authSession3).not.toBeTruthy()
+
+
+            const deleted = await authSessionDao.delete(authSession.uid)
+            expect(deleted).toBeTruthy()
+
+            const deleted2 = await authSessionDao.delete('nosuchid')
+            expect(deleted2).not.toBeTruthy()
+
+            count = await authSessionDao.count()
+            expect(count).toEqual(0)
+
+            await userDao.delete(user.uid)
+        }),
+
+        it('should create/delete a authSession with signin docmain correctly', async () => {
+
+            const userDao = new MysqlUserDao(connection!)
+            const user = await userDao.create({
+                email: 'atticcat@gmail.com',
+                displayName: 'Dennis',
+                hashedPassword: '123454'
+            })
+            
+            const authSessionDao = new MysqlAuthSessionDao(connection!)
+
+            let count = await authSessionDao.count()
+
+            expect(count).toEqual(0)
+
+            const authSession = await authSessionDao.create({
+                userUid: user.uid,
+                token : 'abcdef',
+                signinDomain: 'abc'
+            })
+            expect(authSession).toBeTruthy()
+
+            let {
+                uid,
+                userUid,
+                lastAccessDatetime,
+                createdDatetime,
+                invalid,
+                token,
+                signinDomain
+            } = authSession
+
+            expect(uid).toBeTruthy()
+            expect(userUid).toEqual(user.uid)
+            expect(token).toEqual('abcdef')
+            expect(createdDatetime).toBeTruthy()
+            expect(invalid).toEqual(false)
+            expect(lastAccessDatetime).toBeTruthy()
+            expect(signinDomain).toEqual('abc')
+
+            count = await authSessionDao.count()
+            expect(count).toEqual(1)
+
+            const authSession1 = await authSessionDao.get(authSession.uid)
+            expect(authSession1).toBeTruthy()
+
+            expect(authSession1.uid).toEqual(uid)
+            expect(authSession1.userUid).toEqual(userUid)
+            expect(authSession1.token).toEqual(token)
+            expect(authSession1.createdDatetime).toEqual(createdDatetime)
+            expect(authSession1.invalid).toEqual(invalid)
+            expect(authSession1.lastAccessDatetime).toEqual(lastAccessDatetime)
+            expect(authSession1.signinDomain).toEqual(signinDomain)
+
+            expect(authSession1).toEqual(authSession)
+
+
+            try {
+                const authSession2 = await authSessionDao.create({
+                    userUid: 'nosuchuser',
+                    token : 'anewtoken'
+                })
+                fail("should get error")
+            } catch (err: any) {
+                
+            }
+
+
+            try {
+                const authSession2 = await authSessionDao.get('nosuchid')
+                fail("should get error")
+            } catch (err: any) {
+                
+            }
+
+            const authSession2 = await authSessionDao.findByToken('abcdef')
+
+            expect(authSession2).toBeTruthy()
+
+            expect(authSession2!.uid).toEqual(uid)
+            expect(authSession2!.userUid).toEqual(userUid)
+            expect(authSession2!.token).toEqual(token)
+            expect(authSession2!.createdDatetime).toEqual(createdDatetime)
+            expect(authSession2!.invalid).toEqual(invalid)
+            expect(authSession2!.lastAccessDatetime).toEqual(lastAccessDatetime)
+            expect(authSession2!.signinDomain).toEqual(signinDomain)
 
             expect(authSession2).toEqual(authSession)
 

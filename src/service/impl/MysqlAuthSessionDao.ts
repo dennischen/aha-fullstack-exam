@@ -15,14 +15,16 @@ const TABLE = 'AHA_AUTH_SESSION'
 
 
 function wrapAuthSessionFromRowDataPacket(authSession: AuthSession /*RowDataPacket*/) {
-    return {
+    const o: AuthSession = {
         uid: authSession.uid,
         userUid: authSession.userUid,
         token: authSession.token,
         createdDatetime: authSession.createdDatetime,
-        lastAccessDatetime: authSession.lastAccessDatetime,
         invalid: !!authSession.invalid,//bit -> boolean
-    } as AuthSession
+        lastAccessDatetime: authSession.lastAccessDatetime ?? undefined,
+        signinDomain: authSession.signinDomain ?? undefined
+    }
+    return o;
 }
 
 export class MysqlAuthSessionDao implements AuthSessionDao {
@@ -46,6 +48,7 @@ export class MysqlAuthSessionDao implements AuthSessionDao {
             createdDatetime: now,
             lastAccessDatetime: now,
             token: authSessionCreate.token,
+            signinDomain: authSessionCreate.signinDomain,
             invalid: false
         }
 

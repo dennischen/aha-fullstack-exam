@@ -15,6 +15,7 @@ export type User = {
     disabled: boolean
 
     lastAccessDatetime?: number
+    signupDomain?: string
 }
 
 export const UserCreateSchema: Schema = {
@@ -42,7 +43,11 @@ export const UserCreateSchema: Schema = {
         },
         disabled: {
             type: 'boolean'
-        }
+        },
+        signupDomain: {
+            type: 'string',
+            maxLength: 64
+        },
     },
     required: ['email', 'displayName', 'hashedPassword'],
     additionalProperties: false
@@ -51,9 +56,10 @@ export const UserCreateSchema: Schema = {
 export type UserCreate = {
     email: string
     displayName: string
-    hashedPassword: string,
+    hashedPassword: string
     activated?: boolean
     disabled?: boolean
+    signupDomain?: string
 }
 
 export const UserUpdateSchema: Schema = {
@@ -115,6 +121,7 @@ export type AuthSession = {
     createdDatetime: number
     lastAccessDatetime: number
     invalid: boolean
+    signinDomain?: string
 }
 
 export const AuthSessionCreateSchema: Schema = {
@@ -129,7 +136,11 @@ export const AuthSessionCreateSchema: Schema = {
         token: {
             type: 'string',
             maxLength: 256
-        }
+        },
+        signinDomain: {
+            type: 'string',
+            maxLength: 64
+        },
     },
     required: ['userUid', 'token'],
     additionalProperties: false
@@ -138,6 +149,7 @@ export const AuthSessionCreateSchema: Schema = {
 export type AuthSessionCreate = {
     userUid: string
     token: string
+    signinDomain?: string
 }
 
 export const AuthSessionUpdateSchema: Schema = {

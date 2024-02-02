@@ -95,7 +95,7 @@ export default function ThePage({ }: ThePageProps) {
 
     return <main className={homeStyles.main}>
         <Paper elevation={1} className={homeStyles.mainPaper}>
-            <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32}}>
+            <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32 }}>
                 <Typography variant='h6' >Dashboard{profile && `, ${profile.displayName}`}</Typography>
 
                 {authToken && profile ?
@@ -103,7 +103,9 @@ export default function ThePage({ }: ThePageProps) {
                         <div className={homeStyles.fullwidth}>
                             <MyProfile authToken={authToken} profile={profile} expanded={panel === 'myprofile'} onExpand={(expanded) => { togglePanel('myprofile', expanded) }}
                                 onUpdateProfile={onUpdateProfile} onUnauthenticated={onUnauthenticated} />
-                            <MyPassword authToken={authToken} expanded={panel === 'mypassword'} onExpand={(expanded) => { togglePanel('mypassword', expanded) }} onUnauthenticated={onUnauthenticated} />
+                            {!profile.singinDomain &&
+                                <MyPassword authToken={authToken} expanded={panel === 'mypassword'} onExpand={(expanded) => { togglePanel('mypassword', expanded) }} onUnauthenticated={onUnauthenticated} />
+                            }
                             <UserList authToken={authToken} expanded={panel === 'userlist'} onExpand={(expanded) => { togglePanel('userlist', expanded) }} onUnauthenticated={onUnauthenticated} />
                             <UserStatastics authToken={authToken} expanded={panel === 'userstatastics'} onExpand={(expanded) => { togglePanel('userstatastics', expanded) }} onUnauthenticated={onUnauthenticated} />
                         </div>

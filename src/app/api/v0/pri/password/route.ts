@@ -69,6 +69,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const authSession = await authSessionDao.findByToken(authToken)
         await validateAuthSession(authSession)
 
+        //only allow set password of undefined(default local) signinDomain
+        if(authSession!.signinDomain){
+            return responseJson<CommonResponse>({ message: `Can set user's password of sigin domain ${authSession!.signinDomain}`, error: true }, { status: 403 })
+        }
 
         let user = await userDao.get(authSession!.userUid)
 
