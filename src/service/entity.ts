@@ -232,3 +232,51 @@ export type ActivationUpdate = {
     activatedDatetime?: number | null
 }
 
+
+export type DailyActiveUser = {
+    date: number
+    count: number
+    createdDatetime: number
+}
+
+export const DailyActiveUserCreateSchema: Schema = {
+    $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/DailyActiveUserCreate',
+    type: 'object',
+    properties: {
+        date: {
+            type: 'number',
+            description: "date by 'YYYYMMDD'(e.g. 20240215) format in UTC0"
+        },
+        count: {
+            type: 'number',
+            minimum: 0,
+            description: "active user count"
+        }
+    },
+    required: ['date', 'count'],
+    additionalProperties: false
+}
+
+export type DailyActiveUserCreate = {
+    date: number
+    count: number
+}
+
+export const DailyActiveUserUpdateSchema: Schema = {
+    $schema: `http://json-schema.org/draft-07/schema#`,
+    id: '/DailyActiveUserUpdate',
+    type: 'object',
+    properties: {
+        count: {
+            type: 'number',
+            minimum: 0,
+        }
+    },
+    additionalProperties: false
+}
+
+export type DailyActiveUserUpdate = {
+
+    count?: number
+}

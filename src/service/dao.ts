@@ -3,7 +3,10 @@
  */
 
 import type { Schema } from "jsonschema"
-import type { AuthSession, AuthSessionCreate, AuthSessionUpdate, Activation, ActivationCreate, ActivationUpdate, User, UserCreate, UserUpdate } from "./entity"
+import type {
+    AuthSession, AuthSessionCreate, AuthSessionUpdate, Activation, ActivationCreate, ActivationUpdate,
+    User, UserCreate, UserUpdate, DailyActiveUserCreate, DailyActiveUser, DailyActiveUserUpdate
+} from "./entity"
 
 export type Entity = Record<string, any>
 
@@ -156,7 +159,7 @@ export interface AuthSessionDao {
 
     count(): Promise<number>
 
-    countActiveUserBetween(startDatetime:number, endDatetime: number): Promise<number> 
+    countActiveUserBetween(startDatetime: number, endDatetime: number): Promise<number>
 
 }
 
@@ -178,6 +181,24 @@ export interface ActivationDao {
     list(orderBy?: ActivationOrderBy | ActivationOrderBy[]): Promise<Activation[]>
 
     page(pageable?: ActivationPagable): Promise<ActivationPage>
+
+    deleteAll(): Promise<void>
+
+    count(): Promise<number>
+
+}
+
+export interface DailyActiveUserDao {
+
+    create(dailActivateUserCreate: DailyActiveUserCreate): Promise<DailyActiveUser>
+
+    update(date: number, dailActivateUserUser: DailyActiveUserUpdate): Promise<DailyActiveUser>
+
+    get(date: number): Promise<DailyActiveUser>
+
+    delete(date: number): Promise<boolean>
+
+    list(dateStart: number, dateEnd: number): Promise<DailyActiveUser[]>
 
     deleteAll(): Promise<void>
 
