@@ -9,8 +9,8 @@ import { MysqlAuthSessionDao } from "@/service/impl/MysqlAuthSessionDao"
 import { MysqlUserDao } from "@/service/impl/MysqlUserDao"
 import { beginTransaction, commit, connect, end, rollback } from "@/service/impl/mysql-utils"
 import mysql, { Connection } from 'mysql'
-import { ApiContext } from "."
-import { MysqlDailyActiveUserDao } from "@/service/impl/MysqlDailyActiveUserDao"
+import { ServiceContext } from "."
+import { MysqlDailyActiveUserDao } from "./impl/MysqlDailyActiveUserDao"
 
 export type MySqlConfig = {
     host: string
@@ -19,7 +19,7 @@ export type MySqlConfig = {
     database: string
 }
 
-export default class MySqlApiContext implements ApiContext {
+export default class MySqlApiContext implements ServiceContext {
 
     private config: MySqlConfig
 

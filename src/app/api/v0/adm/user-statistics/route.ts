@@ -80,9 +80,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
         const momentNow = moment()
         const momentStartToday = moment().startOf('date')
 
-        const startToday = new Date()
-        startToday.setUTCHours(0, 0, 0, 0)
-
         const totalActiveUserToday = await authSessionDao.countActiveUserBetween(momentStartToday.valueOf(), momentNow.valueOf())
 
         //TODO No data to track active user for every different user

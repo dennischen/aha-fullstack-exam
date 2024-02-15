@@ -196,6 +196,8 @@ export interface DailyActiveUserDao {
 
     get(date: number): Promise<DailyActiveUser>
 
+    find(date: number): Promise<DailyActiveUser | undefined>
+
     delete(date: number): Promise<boolean>
 
     list(dateStart: number, dateEnd: number): Promise<DailyActiveUser[]>

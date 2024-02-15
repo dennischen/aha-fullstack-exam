@@ -56,6 +56,16 @@ export class MysqlDailyActiveUserDao implements DailyActiveUserDao {
         return wrapDailyActiveUserFromRowDataPacket(results[0])
     }
 
+    async find(date: number): Promise<DailyActiveUser | undefined> {
+        const { results } = await query<DailyActiveUser[]>(this.connection, `SELECT * FROM ${TABLE} WHERE date = ?`, [date])
+
+        if (results.length <= 0) {
+            return undefined
+        }
+
+        return wrapDailyActiveUserFromRowDataPacket(results[0])
+    }
+
     async delete(date: number): Promise<boolean> {
 
         const { results } = await query<OkPacket>(this.connection, `DELETE FROM ${TABLE} WHERE date = ?`, [date])
