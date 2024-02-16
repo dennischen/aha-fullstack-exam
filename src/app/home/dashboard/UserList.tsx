@@ -112,14 +112,14 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                     : userInfoPage ? <>
                         <Table>
                             <TableHead>
-                                <TableRow>
-                                    <TableCell>
+                                <TableRow className={homeStyles.textEllipsisRow}>
+                                    <TableCell style={{width: '30%'}}>
                                         <TableSortLabel
                                             active={orderBy.field === 'email'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('email') }}
                                             disabled={querying}>E-Mail</TableSortLabel></TableCell>
-                                    <TableCell>
+                                    <TableCell style={{width: '25%'}}>
                                         <TableSortLabel
                                             active={orderBy.field === 'displayName'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
@@ -142,11 +142,11 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                             </TableHead>
                             <TableBody>
                                 {userInfoPage.content.map((user, idx) => (
-                                    <TableRow key={idx}>
-                                        <TableCell component="th" scope="row">
+                                    <TableRow key={idx} className={homeStyles.textEllipsisRow}>
+                                        <TableCell style={{width: '30%'}}>
                                             {user.email}
                                         </TableCell>
-                                        <TableCell>{user.displayName}</TableCell>
+                                        <TableCell style={{width: '25%'}}>{user.displayName}</TableCell>
                                         <TableCell align="right" className={homeStyles.displayNoneInXs}>{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
                                         <TableCell align="right" className={homeStyles.displayNoneInSm}>{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
                                         <TableCell align="right">{user.loginCount}</TableCell>

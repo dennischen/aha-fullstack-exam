@@ -6,8 +6,8 @@
 
 import { Authentication } from "@/app/api/v0/dto"
 import homeStyles from "@/app/home/home.module.scss"
-import { findAuthTokenInCookie, setAuthTokenToCookie } from "@/app/home/server-utils"
-import { Typography } from "@mui/material"
+import { findAuthTokenInCookie } from "@/app/home/server-utils"
+import Typography from "@mui/material/Typography"
 import axios from "axios"
 import { google } from "googleapis"
 import Link from "next/link"

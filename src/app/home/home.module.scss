@@ -41,7 +41,8 @@ $radius: 3px;
     flex-direction: column;
     align-items: center;
     padding: $spacing;
-    @media (min-width: 800px){
+
+    @media (min-width: 800px) {
         width: 800px;
     }
 }
@@ -49,7 +50,8 @@ $radius: 3px;
 .mainPaper {
     padding: $spacing;
     width: 100%;
-    @media (min-width: 800px){
+
+    @media (min-width: 800px) {
         padding: 3*$spacing;
     }
 }
@@ -68,7 +70,7 @@ $radius: 3px;
 
 .displayNoneInSm {
     &:global(.MuiTableCell-root) {
-        @media (max-width: 768px){
+        @media (max-width: 768px) {
             display: none;
         }
     }
@@ -76,8 +78,19 @@ $radius: 3px;
 
 .displayNoneInXs {
     &:global(.MuiTableCell-root) {
-        @media (max-width: 420px){
+        @media (max-width: 420px) {
             display: none;
         }
+    }
+}
+
+.textEllipsisRow {
+    & td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: pre-line;
+        max-width: 0;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 }

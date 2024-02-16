@@ -5,16 +5,16 @@
  */
 
 import { CommonResponse, Profile } from '@/app/api/v0/dto'
+import { getErrorCommonHelp } from '@/app/home/client-utils'
 import homeStyles from "@/app/home/home.module.scss"
 import { CommonHelp } from "@/app/home/types"
 import Button from '@mui/material/Button'
 import FormHelperText from '@mui/material/FormHelperText'
 import Typography from '@mui/material/Typography'
+import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import clsx from 'clsx'
 import { useCallback, useState } from 'react'
-import { getErrorCommonHelp } from '../client-utils'
-import { useWorkspace } from '@nextspace'
 
 type Props = {
     authToken: string,

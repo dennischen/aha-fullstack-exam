@@ -4,22 +4,14 @@
  * @author: Dennis Chen
  */
 
-import { Authentication, Profile, SigninForm } from "@/app/api/v0/dto"
-import { getErrorCommonHelp, setClientAuthentication } from "@/app/home/client-utils"
-import VisibilityAdornment from "@/app/home/components/VisibilityInputAdornment"
+import { Profile } from "@/app/api/v0/dto"
+import { setClientAuthentication } from "@/app/home/client-utils"
 import homeStyles from "@/app/home/home.module.scss"
-import { CommonHelp } from "@/app/home/types"
-import Button from '@mui/material/Button'
-import FormHelperText from '@mui/material/FormHelperText'
 import Paper from '@mui/material/Paper'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import axios, { AxiosError } from "axios"
-import clsx from 'clsx'
-import { Validator } from "jsonschema"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { useEffect } from "react"
 
 //passed from server component
 export type ThePageProps = {
