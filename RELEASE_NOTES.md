@@ -4,7 +4,8 @@
  
  ### 0.0.2
  ##### New Features  
-       
+ * #2, Support last 7 days rolling average of active users
+
  ##### Enhancements	
  * #1, Disallow Changes for Authenticated Users via OAuth.
           
@@ -12,7 +13,7 @@
    
  ##### Upgrade Notes   
  * Added `signupDomain` column to `AHA_USER` and `signinDomain` to `AHA_AUTH_SESSION`.
-
+ * Added `AHA_DAILY_ACTIVE_USER` table
 
  History
 -------------------------------------------
