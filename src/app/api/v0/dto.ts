@@ -353,19 +353,47 @@ export type UpdatePasswordForm = {
  *         totalActiveUserToday: 
  *           type: number
  *           description: 'Total number of users with active sessions today.'
- *         avgActiveUserIn7Days: 
- *           type: number
+ *         avgActiveUserIn7DaysRolling: 
+ *           type: array
  *           description: 'Average number of active session users in the last 7 days rolling.'
+ *           items:
+ *             $ref : '#/components/schemas/ValueOnDate'
  *       required:
  *         - totalSignedUpUser
  *         - totalActiveUserToday
- *         - avgActiveUserIn7Days
+ *         - avgActiveUserIn7DaysRolling
  */
 export type UserStatistics = {
     totalSignedUpUser: number,
     totalActiveUserToday: number,
-    avgActiveUserIn7Days: number
+    avgActiveUserIn7DaysRolling: ValueOnDate<number>[]
 }
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ValueOnDate:
+ *       type: object
+ *       properties:
+ *         date: 
+ *           type: string
+ *           description: 'the date string by YYYYMMDD format'
+ *         value: 
+ *           oneOf:
+ *              - type: string
+ *              - type: number
+ *              - type: boolean
+ *           description: 'the value for the date'
+ *       required:
+ *         - date
+ */
+export type ValueOnDate<T> = {
+    date: string,
+    value?: T
+}
+
 
 
 /**

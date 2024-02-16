@@ -1,3 +1,8 @@
 DROP TABLE IF EXISTS `AHA_AUTH_SESSION`;
 DROP TABLE IF EXISTS `AHA_ACTIVATION`;
 DROP TABLE IF EXISTS `AHA_USER`;
+
+/**
+ * Implement #2 Support last 7 days rolling average of active users
+ */
+DROP TABLE IF EXISTS `AHA_DAILY_ACTIVE_USER`;

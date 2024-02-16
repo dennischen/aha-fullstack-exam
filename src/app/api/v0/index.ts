@@ -3,7 +3,7 @@
  * @author: Dennis Chen
  */
 
-import { ActivationDao, AuthSessionDao, UserDao } from "@/service/dao"
+import { ActivationDao, AuthSessionDao, DailyActiveUserDao, UserDao } from "@/service/dao"
 
 export class ApiError extends Error {
 
@@ -23,6 +23,8 @@ export interface ApiContext {
     getAuthSessionDao(): Promise<AuthSessionDao>
 
     getActivationDao(): Promise<ActivationDao>
+
+    getDailyActiveUserDao(): Promise<DailyActiveUserDao>
 
     hasTx(): boolean
 

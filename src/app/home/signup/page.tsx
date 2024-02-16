@@ -5,7 +5,7 @@
  */
 
 import { redirect } from "next/navigation"
-import { findAuthTokenInCookie } from "../server-utils"
+import { findAuthTokenInCookie } from "@/app/home/server-utils"
 import ThePage from "./ThePage"
 
 //not like signin page that checks authToken and validate in server component, 

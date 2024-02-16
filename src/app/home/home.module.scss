@@ -41,15 +41,17 @@ $radius: 3px;
     flex-direction: column;
     align-items: center;
     padding: $spacing;
-    @media (min-width: 800px){
-        width: 800px;
+
+    @media (min-width: 1200px) {
+        width: 1200px;
     }
 }
 
 .mainPaper {
     padding: $spacing;
     width: 100%;
-    @media (min-width: 800px){
+
+    @media (min-width: 900px) {
         padding: 3*$spacing;
     }
 }
@@ -63,21 +65,5 @@ $radius: 3px;
 .accordionSummary {
     &:global(.Mui-expanded) {
         background-color: #0001;
-    }
-}
-
-.displayNoneInSm {
-    &:global(.MuiTableCell-root) {
-        @media (max-width: 768px){
-            display: none;
-        }
-    }
-}
-
-.displayNoneInXs {
-    &:global(.MuiTableCell-root) {
-        @media (max-width: 420px){
-            display: none;
-        }
     }
 }

@@ -3,7 +3,7 @@
  * @author: Dennis Chen
  */
 
-import { CommonResponse, UserStatistics } from "@/app/api/v0/dto"
+import { CommonResponse, UserStatistics, ValueOnDate } from "@/app/api/v0/dto"
 import { responseJson, validateAuthSession, validateAuthToken } from "@/app/api/v0/utils"
 import withApiContext from "@/app/api/v0/withApiContext"
 import { NextRequest, NextResponse } from "next/server"
@@ -54,6 +54,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         const authSessionDao = await context.getAuthSessionDao()
         const userDao = await context.getUserDao()
+        const dailyActiveUserDao = await context.getDailyActiveUserDao()
 
         const authSession = await authSessionDao.findByToken(authToken)
         await validateAuthSession(authSession)
@@ -77,23 +78,52 @@ export async function GET(req: NextRequest, res: NextResponse) {
         const totalSignedUpUser = await userDao.count()
 
         //TODO Depends on whose timezone?
-        const momentNow = moment()
-        const momentStartToday = moment().startOf('date')
-
-        const startToday = new Date()
-        startToday.setUTCHours(0, 0, 0, 0)
-
+        const momentNow = moment()//.tz()
+        const momentStartToday = momentNow.clone().startOf('date')
         const totalActiveUserToday = await authSessionDao.countActiveUserBetween(momentStartToday.valueOf(), momentNow.valueOf())
 
-        //TODO No data to track active user for every different user
-        //consider to enhance schema to track or just user GA
-        const avgActiveUserIn7Days = 0
+        //calculate n days rolling
+        const rollingDays = 7
+        const backwardDays = 7
 
+
+        //start from yesterday
+        const moEnd = momentNow.clone().subtract(1, 'day')
+        const moStart = moEnd.clone().subtract(backwardDays + rollingDays, 'day')
+
+        const dailyUsers = await dailyActiveUserDao.list(parseInt(moEnd.format('YYYYMMDD')), parseInt(moStart.format('YYYYMMDD')))
+        const dailyUserMap = new Map(dailyUsers.map(item => [item.date, item]))
+
+        const avgActiveUserIn7DaysRolling: ValueOnDate<number>[] = []
+
+        for (let i = 0; i < backwardDays; i++) {
+            //look backward n days
+            const moBackwardDate = moEnd.clone().subtract(i, 'day')
+
+            let sum = 0
+            //calculate avg in n days
+            for (let j = 0; j < rollingDays; j++) {
+                const moRollingDate = moBackwardDate.clone().subtract(j, 'day')
+
+                const v = dailyUserMap.get(parseInt(moRollingDate.format('YYYYMMDD')))
+                if (v?.count) {
+                    sum += v.count
+                }
+            }
+
+            const avg = sum / rollingDays
+
+            avgActiveUserIn7DaysRolling.push({
+                date: moBackwardDate.format('YYYYMMDD'),
+                //show decimal pleaces
+                value: avg < 10 ? (Math.round(avg * 100) / 100) : (avg < 100 ? (Math.round(avg * 10) / 10) : Math.round(avg))
+            })
+        }
 
         const userStatistics: UserStatistics = {
             totalSignedUpUser,
             totalActiveUserToday,
-            avgActiveUserIn7Days,
+            avgActiveUserIn7DaysRolling,
         }
 
         return responseJson<UserStatistics>(userStatistics)

@@ -16,12 +16,20 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormHelperText from '@mui/material/FormHelperText'
+import InputLabel from '@mui/material/InputLabel'
 import Skeleton from '@mui/material/Skeleton'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
+
+import dynamic from 'next/dynamic'
 
 type Props = {
     authToken: string,
@@ -29,6 +37,8 @@ type Props = {
     onExpand: (expanded: boolean) => void
     onUnauthenticated: () => void
 }
+
+const AvgActiveUserIn7DaysRollingChart = dynamic(() => import('./AvgActiveUserIn7DaysRollingChart'), { loading: () => <p>Loading...</p> })
 
 export default function UserStatisticsView({ authToken, expanded, onExpand, onUnauthenticated }: Props) {
 
@@ -76,7 +86,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
             </div>
         </AccordionSummary>
         <AccordionDetails>
-            <div className={homeStyles.vlayout} style={{ justifyContent: 'center', gap: 32 }}>
+            <div className={homeStyles.vlayout} style={{ alignItems: 'stretch', gap: 32 }}>
                 {commonHelp?.error ?
                     <Button onClick={queryUserStatastics} disabled={querying}>Query again</Button>
                     : userStatastics ? <>
@@ -85,7 +95,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
                             InputLabelProps={{
                                 shrink: true,
                             }}
-                            className={homeStyles.fullwidth}
+
                             value={userStatastics.totalSignedUpUser}
                             InputProps={{
                                 readOnly: true,
@@ -100,7 +110,7 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
                             InputLabelProps={{
                                 shrink: true,
                             }}
-                            className={homeStyles.fullwidth}
+
                             value={userStatastics.totalActiveUserToday}
                             InputProps={{
                                 readOnly: true,
@@ -110,24 +120,29 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
                             }}
                             variant='standard'
                         ></TextField>
-                        <TextField
-                            label="Average Activate user in 7 Days"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            className={homeStyles.fullwidth}
-                            value={userStatastics.avgActiveUserIn7Days}
-                            InputProps={{
-                                readOnly: true,
-                                inputProps: {
-                                    style: { textAlign: "right" },
-                                }
-                            }}
-                            variant='standard'
-                            helperText={
-                                <span style={{ color: 'orange' }} >This value is not implemented yet</span>
-                            }
-                        ></TextField>
+                        <div className={homeStyles.vlayout} style={{ alignItems: 'stretch', gap: 8 }}>
+                            <InputLabel shrink>Average Activate user in 7 Days Rolling</InputLabel>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center" >Date</TableCell>
+                                        <TableCell align="right" >Average</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {userStatastics.avgActiveUserIn7DaysRolling.map((vod, idx) => {
+                                        return <TableRow key={idx}>
+                                            <TableCell align="center" >{vod.date}</TableCell>
+                                            <TableCell align="right" >{vod.value}</TableCell>
+                                        </TableRow>
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </div>
+                        
+                        {//dynamic load only when expanded
+                        expanded && <AvgActiveUserIn7DaysRollingChart data={userStatastics.avgActiveUserIn7DaysRolling}/>
+                        }
                     </>
                         : <Skeleton variant="rounded" height={100} className={homeStyles.fullwidth} />}
 

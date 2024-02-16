@@ -1,0 +1,71 @@
+.table {
+
+    & :global(.MuiTableCell-root) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: pre-line;
+        max-width: 0;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    & :global(.email) {
+        width: 30%;
+    }
+
+    & :global(.displayName) {
+        width: 20%;
+    }
+
+    & :global(.signedupDatetime) {
+        width: 20%;
+    }
+
+    & :global(.lastAccessDatetime) {
+        width: 20%;
+    }
+
+    & :global(.loginCount) {
+        width: 10%;
+    }
+
+    @media (max-width: 768px) {
+        & :global(.email) {
+            width: 40%;
+        }
+
+        & :global(.displayName) {
+            width: 25%;
+        }
+
+        & :global(.signedupDatetime) {
+            width: 20%;
+        }
+
+        & :global(.lastAccessDatetime) {
+            display: none;
+        }
+
+        & :global(.loginCount) {
+            width: 15%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        & :global(.email) {
+            width: 50%;
+        }
+
+        & :global(.displayName) {
+            width: 35%;
+        }
+
+        & :global(.signedupDatetime) {
+            display: none;
+        }
+
+        & :global(.loginCount) {
+            width: 15%;
+        }
+    }
+}

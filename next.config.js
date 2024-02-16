@@ -10,6 +10,9 @@ const nextConfig = {
             },
         ]
     },
+    experimental: {
+        instrumentationHook: true
+    },
     webpack: (config) => {
         
         //handle as_txt, as_uri media query for importing them as a inline text or data url
