@@ -3,18 +3,24 @@
  */
 
 import { parseExpression } from 'cron-parser'
-import moment from 'moment'
-import 'moment-timezone'
 import nodeSchedule from 'node-schedule'
+import { ServiceContext, ServiceError } from '.'
+import collectDailyActiveUser from './schedule/collectDailyActiveUser'
 import withServiceContext from './withServiceContext'
 
-const CRON_DAILY_ACTIVE_USER = process.env.CRON_DAILY_ACTIVE_USER || '0 59 23 * * *'
+const CRON_DAILY_ACTIVE_USER = process.env.CRON_DAILY_ACTIVE_USER || '30 59 * * * *'
 const SCHEDULER_TIMEZONE = process.env.SCHEDULER_TIMEZONE || 'UTC'
+
+export type ScheduleProps = {
+    fireDate: Date
+    context: ServiceContext
+    timezone: string
+}
 
 export async function schedule() {
     //we need to set timezone to utc, can't use cron expression directly
 
-    scheduleTask(CRON_DAILY_ACTIVE_USER, skipStillRunning(collectDailyActiveUser), 'collectDailyActiveUser')
+    scheduleTask(CRON_DAILY_ACTIVE_USER, withSkipStillRunning(withSchedulerServiceContext(collectDailyActiveUser)), 'CollectDailyActiveUser')
 
 }
 
@@ -43,8 +49,8 @@ function newRecurrentRule(expression: string) {
     return rule
 }
 
-function skipStillRunning<T>(task: (fireDate: Date) => Promise<T>): (fireDate: Date) => Promise<T | undefined> {
-    const fnRunning = async (fireDate: Date) => {
+function withSkipStillRunning<T>(task: (fireDate: Date) => Promise<T>): (fireDate: Date) => Promise<T | undefined> {
+    return async (fireDate: Date) => {
         if (!(task as any).__stillRunning) {
             try {
                 (task as any).__stillRunning = true
@@ -54,36 +60,20 @@ function skipStillRunning<T>(task: (fireDate: Date) => Promise<T>): (fireDate: D
             }
         }
     }
-    return fnRunning
 }
 
-async function wait(t: number) {
-    return new Promise((resolve, rejct) => {
-        setTimeout(() => {
-            resolve(undefined)
-        }, t)
-    })
-}
-
-async function collectDailyActiveUser(fireDate: Date) {
-    const fd = moment(fireDate).tz(SCHEDULER_TIMEZONE)
-    const date = parseInt(fd.format('YYYYMMDD'))
-    const momentStartFireDate = fd.clone().startOf('date')
-    const momentEndFireDate = fd.clone().endOf('date')
-    return withServiceContext(async ({ context }) => {
-        const authSessionDao = await context.getAuthSessionDao()
-        const totalActiveUser = await authSessionDao.countActiveUserBetween(momentStartFireDate.valueOf(), momentEndFireDate.valueOf())
-
-        const dailyActiveUserDao = await context.getDailyActiveUserDao()
-        const dailyActiveUser = await dailyActiveUserDao.find(date)
-        if (dailyActiveUser) {
-            //update
-            if (totalActiveUser > dailyActiveUser.count) {
-                await dailyActiveUserDao.update(date, { count: totalActiveUser })
+function withSchedulerServiceContext<T>(task: (prop: ScheduleProps) => Promise<T>): (fireDate: Date) => Promise<T | undefined> {
+    return async (fireDate: Date) => {
+        try {
+            return await withServiceContext(async ({ context }) => {
+                return await task({ context, fireDate, timezone: SCHEDULER_TIMEZONE })
+            })
+        } catch (err) {
+            if (err instanceof ServiceError) {
+                console.error('A service error in scheduled task.', err)
+            } else {
+                console.error('An unknow error in scheduled task.', err)
             }
-            
-        } else {
-            await dailyActiveUserDao.create({ date, count: totalActiveUser })
         }
-    })
+    }
 }
