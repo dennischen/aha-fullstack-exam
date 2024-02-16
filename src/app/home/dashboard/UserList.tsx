@@ -30,6 +30,8 @@ import axios, { AxiosError } from 'axios'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
 
+import UserListStyles from "./UserList.module.scss"
+
 type Props = {
     authToken: string,
     expanded: boolean,
@@ -110,46 +112,46 @@ export default function UserList({ authToken, expanded, onExpand, onUnauthentica
                 {commonHelp?.error ?
                     <Button onClick={() => { queryUserInfo(userInfoQuery) }} disabled={querying}>Query again</Button>
                     : userInfoPage ? <>
-                        <Table>
+                        <Table className={UserListStyles.table}>
                             <TableHead>
-                                <TableRow className={homeStyles.textEllipsisRow}>
-                                    <TableCell style={{width: '30%'}}>
+                                <TableRow>
+                                    <TableCell className={'email'}>
                                         <TableSortLabel
                                             active={orderBy.field === 'email'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('email') }}
                                             disabled={querying}>E-Mail</TableSortLabel></TableCell>
-                                    <TableCell style={{width: '25%'}}>
+                                    <TableCell className={'displayName'}>
                                         <TableSortLabel
                                             active={orderBy.field === 'displayName'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('displayName') }}
                                             disabled={querying}>Name</TableSortLabel></TableCell>
-                                    <TableCell align="right" className={homeStyles.displayNoneInXs}>
+                                    <TableCell align="right" className={'signedupDatetime'}>
                                         <TableSortLabel
                                             active={orderBy.field === 'signedupDatetime'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('signedupDatetime') }}
                                             disabled={querying}>Signedup Datetime</TableSortLabel></TableCell>
-                                    <TableCell align="right" className={homeStyles.displayNoneInSm}>
+                                    <TableCell align="right" className={'lastAccessDatetime'}>
                                         <TableSortLabel
                                             active={orderBy.field === 'lastAccessDatetime'}
                                             direction={orderBy.desc ? 'desc' : 'asc'}
                                             onClick={() => { onSort('lastAccessDatetime') }}
                                             disabled={querying}>Access datetime</TableSortLabel></TableCell>
-                                    <TableCell align="right">Login Count</TableCell>
+                                    <TableCell align="right" className={'loginCount'}>Login Count</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {userInfoPage.content.map((user, idx) => (
-                                    <TableRow key={idx} className={homeStyles.textEllipsisRow}>
-                                        <TableCell style={{width: '30%'}}>
+                                    <TableRow key={idx}>
+                                        <TableCell className={''}>
                                             {user.email}
                                         </TableCell>
-                                        <TableCell style={{width: '25%'}}>{user.displayName}</TableCell>
-                                        <TableCell align="right" className={homeStyles.displayNoneInXs}>{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
-                                        <TableCell align="right" className={homeStyles.displayNoneInSm}>{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
-                                        <TableCell align="right">{user.loginCount}</TableCell>
+                                        <TableCell className={'displayName'}>{user.displayName}</TableCell>
+                                        <TableCell align="right" className={'signedupDatetime'}>{moment(user.signedupDatetime).format(preferredDatetimeFormat)}</TableCell>
+                                        <TableCell align="right" className={'lastAccessDatetime'}>{user.lastAccessDatetime ? moment(user.lastAccessDatetime).format(preferredDatetimeFormat) : ''}</TableCell>
+                                        <TableCell align="right" className={'loginCount'}>{user.loginCount}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -29,12 +29,16 @@ import { useWorkspace } from '@nextspace'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
+import dynamic from 'next/dynamic'
+
 type Props = {
     authToken: string,
     expanded: boolean,
     onExpand: (expanded: boolean) => void
     onUnauthenticated: () => void
 }
+
+const AvgActiveUserIn7DaysRollingChart = dynamic(() => import('./AvgActiveUserIn7DaysRollingChart'), { loading: () => <p>Loading...</p> })
 
 export default function UserStatisticsView({ authToken, expanded, onExpand, onUnauthenticated }: Props) {
 
@@ -120,14 +124,14 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
                             <InputLabel shrink>Average Activate user in 7 Days Rolling</InputLabel>
                             <Table>
                                 <TableHead>
-                                    <TableRow className={homeStyles.textEllipsisRow}>
+                                    <TableRow>
                                         <TableCell align="center" >Date</TableCell>
                                         <TableCell align="right" >Average</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {userStatastics.avgActiveUserIn7DaysRolling.map((vod, idx) => {
-                                        return <TableRow key={idx} className={homeStyles.textEllipsisRow}>
+                                        return <TableRow key={idx}>
                                             <TableCell align="center" >{vod.date}</TableCell>
                                             <TableCell align="right" >{vod.value}</TableCell>
                                         </TableRow>
@@ -135,6 +139,10 @@ export default function UserStatisticsView({ authToken, expanded, onExpand, onUn
                                 </TableBody>
                             </Table>
                         </div>
+                        
+                        {//dynamic load only when expanded
+                        expanded && <AvgActiveUserIn7DaysRollingChart data={userStatastics.avgActiveUserIn7DaysRolling}/>
+                        }
                     </>
                         : <Skeleton variant="rounded" height={100} className={homeStyles.fullwidth} />}
 
